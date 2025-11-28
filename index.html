@@ -116,6 +116,37 @@
       box-shadow: inset 0 -12px 24px rgba(0, 0, 0, 0.06);
     }
 
+    .lane.winner {
+      box-shadow: 0 0 0 3px #ff7ab6, 0 12px 28px rgba(255, 79, 139, 0.35),
+        inset 0 -12px 24px rgba(0, 0, 0, 0.06);
+      transform: translateY(-4px);
+    }
+
+    .lane.winner::after {
+      content: "🏁";
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 18px;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+      animation: winnerPop 800ms ease forwards;
+    }
+
+    @keyframes winnerPop {
+      0% {
+        transform: translateY(-8px) scale(0.8);
+        opacity: 0;
+      }
+      60% {
+        transform: translateY(0) scale(1.08);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
     .finish-line {
       position: absolute;
       top: 8px;
@@ -481,6 +512,7 @@
         return;
       }
       warningEl.textContent = "";
+      clearWinningLane();
       startBtn.disabled = true;
       disableBetButtons(true);
       prepareRaceDynamics();
@@ -598,14 +630,41 @@
       if (!state.racing) return;
       state.racing = false;
       cancelAnimationFrame(state.raceTimer);
+      const winningIndex = climbers.indexOf(winningClimber);
       const picked = climbers[state.selected];
       const won = picked === winningClimber;
+      const stake = Math.floor(Math.random() * 21) + 5; // $5 - $25
+      const payout = calculatePayout(picked.odds, stake);
+
+      highlightWinningLane(winningIndex);
+
       resultTitle.textContent = won ? "You win!" : "Race finished";
       resultText.textContent = `You picked ${picked.name}. Winner: ${winningClimber.name}. ${
-        won ? "🎉 You win!" : "Better luck next time!"
+        won
+          ? `You win $${stake}! (payout $${payout})`
+          : `You lose your stake of $${stake}`
       }`;
       resultBanner.classList.add("show");
       resetUI();
+    }
+
+    function calculatePayout(odds, stake) {
+      const [num, den] = odds.split("/").map(Number);
+      if (!num || !den) return stake * 2;
+      const multiplier = num / den;
+      return Math.round(stake * (1 + multiplier));
+    }
+
+    function highlightWinningLane(winningIndex) {
+      document.querySelectorAll(".lane").forEach((lane) => {
+        lane.classList.toggle("winner", Number(lane.dataset.index) === winningIndex);
+      });
+    }
+
+    function clearWinningLane() {
+      document.querySelectorAll(".lane.winner").forEach((lane) => {
+        lane.classList.remove("winner");
+      });
     }
 
     // Clear state for next race
