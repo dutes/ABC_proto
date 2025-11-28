@@ -54,9 +54,14 @@
       opacity: 0.25;
     }
 
+    .app-container {
+      width: min(820px, 95vw);
+      margin: 0 auto;
+    }
+
     .app {
       position: relative;
-      width: min(700px, 95vw);
+      width: 100%;
       max-width: 740px;
       background: var(--panel);
       border: 4px solid var(--border);
@@ -91,7 +96,7 @@
     .race-area {
       position: relative;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 10px;
       align-items: end;
     }
@@ -264,6 +269,29 @@
       color: #ff4f8b;
     }
 
+    .instructions {
+      text-align: center;
+      display: grid;
+      gap: 4px;
+      font-weight: 700;
+    }
+
+    .instruction-main {
+      font-size: 16px;
+    }
+
+    .instruction-sub {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .odds-tip {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
     .betting {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -398,28 +426,62 @@
         grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
       }
     }
+
+    @media (max-width: 480px) {
+      .title {
+        font-size: 22px;
+      }
+
+      .race-wrapper {
+        padding: 12px;
+      }
+
+      .start-btn {
+        padding: 10px;
+        font-size: 15px;
+      }
+
+      .bet-btn {
+        padding: 9px 10px;
+      }
+
+      .instruction-main {
+        font-size: 15px;
+      }
+
+      .instruction-sub {
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 <body class="confetti">
-  <div class="app">
-    <div class="title">Always Be Climbing</div>
-    <div class="race-wrapper">
-      <div class="race-area" id="raceArea">
-        <div class="finish-line"></div>
-        <div class="finish-bell">🔔</div>
-      </div>
-      <div class="controls">
-        <div class="countdown" id="countdown"></div>
-        <div class="betting" id="betting"></div>
-        <button class="start-btn" id="startBtn">Start Race</button>
-        <div class="warning" id="warning"></div>
-        <div class="race-log" id="raceLog"></div>
-      </div>
-      <div class="result-banner" id="resultBanner">
-        <div class="result-card">
-          <h3 id="resultTitle"></h3>
-          <p id="resultText"></p>
-          <button id="closeResult">Close</button>
+  <div class="app-container">
+    <div class="app">
+      <div class="title">Always Be Climbing</div>
+      <div class="race-wrapper">
+        <div class="race-area" id="raceArea">
+          <div class="finish-line"></div>
+          <div class="finish-bell">🔔</div>
+        </div>
+        <div class="controls">
+          <div class="countdown" id="countdown"></div>
+          <div class="instructions">
+            <div class="instruction-main">Select a climber to bet on, then press Start Race.</div>
+            <div class="instruction-sub">For this demo, your stake is fixed at $10. Payout = stake × (odds + 1).</div>
+          </div>
+          <div class="betting" id="betting"></div>
+          <div class="odds-tip">Shorter odds = more reliable climber. Longer odds = riskier but higher payout.</div>
+          <button class="start-btn" id="startBtn">Start Race</button>
+          <div class="warning" id="warning"></div>
+          <div class="race-log" id="raceLog"></div>
+        </div>
+        <div class="result-banner" id="resultBanner">
+          <div class="result-card">
+            <h3 id="resultTitle"></h3>
+            <p id="resultText"></p>
+            <button id="closeResult">Close</button>
+          </div>
         </div>
       </div>
     </div>
@@ -434,6 +496,8 @@
       { name: "Robot", emoji: "🤖", odds: "4/1", color: "#e8e9ff", baseSpeed: 1.05 },
       { name: "Jester", emoji: "🤡", odds: "8/1", color: "#ffd6f2", baseSpeed: 0.9 },
     ];
+
+    const STAKE = 10;
 
     const burstWords = {
       boost: ["WOOSH!"],
@@ -633,26 +697,37 @@
       const winningIndex = climbers.indexOf(winningClimber);
       const picked = climbers[state.selected];
       const won = picked === winningClimber;
-      const stake = Math.floor(Math.random() * 21) + 5; // $5 - $25
-      const payout = calculatePayout(picked.odds, stake);
+      const { num, den } = parseOdds(picked.odds);
+      const payout = calculatePayout(num, den);
+      const net = payout - STAKE;
 
       highlightWinningLane(winningIndex);
 
       resultTitle.textContent = won ? "You win!" : "Race finished";
-      resultText.textContent = `You picked ${picked.name}. Winner: ${winningClimber.name}. ${
-        won
-          ? `You win $${stake}! (payout $${payout})`
-          : `You lose your stake of $${stake}`
-      }`;
+      resultText.textContent = won
+        ? `You picked ${picked.name} at ${picked.odds}. Winner: ${winningClimber.name}. You staked $${formatMoney(
+            STAKE
+          )} and received a total payout of $${formatMoney(payout)} (net +$${formatMoney(net)}).`
+        : `You picked ${picked.name} at ${picked.odds}. Winner: ${winningClimber.name}. You lose your stake of $${formatMoney(
+            STAKE
+          )}.`;
       resultBanner.classList.add("show");
       resetUI();
     }
 
-    function calculatePayout(odds, stake) {
+    function parseOdds(odds) {
       const [num, den] = odds.split("/").map(Number);
-      if (!num || !den) return stake * 2;
+      return { num: num || 0, den: den || 1 };
+    }
+
+    function calculatePayout(num, den) {
+      if (!num || !den) return STAKE * 2;
       const multiplier = num / den;
-      return Math.round(stake * (1 + multiplier));
+      return Math.round(STAKE * (1 + multiplier));
+    }
+
+    function formatMoney(amount) {
+      return Number.isInteger(amount) ? amount : amount.toFixed(2);
     }
 
     function highlightWinningLane(winningIndex) {
@@ -669,7 +744,6 @@
 
     // Clear state for next race
     function resetUI() {
-      startBtn.disabled = false;
       disableBetButtons(false);
       state.positions.forEach((_, idx) => state.positions.set(idx, 0));
       document.querySelectorAll(".climber").forEach((el) => {
@@ -689,11 +763,15 @@
       line.textContent = `[${time}] ${text}`;
       raceLog.appendChild(line);
       raceLog.scrollTop = raceLog.scrollHeight;
+      while (raceLog.children.length > 20) {
+        raceLog.removeChild(raceLog.firstChild);
+      }
     }
 
     // Close result modal
     closeResult.addEventListener("click", () => {
       resultBanner.classList.remove("show");
+      startBtn.disabled = false;
     });
 
     // Hook up start button
