@@ -397,16 +397,16 @@
   <script>
     // Simple climber data with emojis and fun odds text
     const climbers = [
-      { name: "Monkey", emoji: "🐵", odds: "2/1", color: "#ffd166" },
-      { name: "Dwarf", emoji: "🧔‍♂️", odds: "5/1", color: "#9ad5ff" },
-      { name: "Goblin", emoji: "🧌", odds: "10/1", color: "#c2f5b6" },
-      { name: "Robot", emoji: "🤖", odds: "4/1", color: "#e8e9ff" },
-      { name: "Jester", emoji: "🤡", odds: "8/1", color: "#ffd6f2" },
+      { name: "Monkey", emoji: "🐵", odds: "2/1", color: "#ffd166", baseSpeed: 1.15 },
+      { name: "Dwarf", emoji: "🧔‍♂️", odds: "5/1", color: "#9ad5ff", baseSpeed: 0.95 },
+      { name: "Goblin", emoji: "🧌", odds: "10/1", color: "#c2f5b6", baseSpeed: 0.82 },
+      { name: "Robot", emoji: "🤖", odds: "4/1", color: "#e8e9ff", baseSpeed: 1.05 },
+      { name: "Jester", emoji: "🤡", odds: "8/1", color: "#ffd6f2", baseSpeed: 0.9 },
     ];
 
     const burstWords = {
-      boost: ["BAF!", "WHOOSH!", "BING!", "ZAP!", "KAPOW!"],
-      slip: ["SLIP!", "BONK!", "OOF!", "WOBBLE!", "UH-OH!"]
+      boost: ["WOOSH!"],
+      slip: ["SLIP!"]
     };
 
     const raceArea = document.getElementById("raceArea");
@@ -426,6 +426,7 @@
       positions: new Map(),
       inCountdown: false,
       racing: false,
+      raceFactors: new Map(),
     };
 
     // Build the lane elements and bet buttons
@@ -482,6 +483,7 @@
       warningEl.textContent = "";
       startBtn.disabled = true;
       disableBetButtons(true);
+      prepareRaceDynamics();
       state.inCountdown = true;
       countdown(["3", "2", "1", "GO!"], () => {
         state.inCountdown = false;
@@ -508,6 +510,15 @@
       tick();
     }
 
+    function prepareRaceDynamics() {
+      const raceFactors = new Map();
+      climbers.forEach((_, idx) => {
+        const skill = 0.9 + Math.random() * 0.2; // 0.9 - 1.1
+        raceFactors.set(idx, skill);
+      });
+      state.raceFactors = raceFactors;
+    }
+
     // Main race loop using requestAnimationFrame for smoothness
     function runRace() {
       const lanes = Array.from(document.querySelectorAll(".lane"));
@@ -517,7 +528,9 @@
         lanes.forEach((lane, idx) => {
           const maxHeight = lane.clientHeight - 24; // padding for top line
           let pos = state.positions.get(idx) || 0;
-          const baseMove = Math.random() * 0.28 + 0.12;
+          const baseMove = (Math.random() * 0.24 + 0.12) *
+            climbers[idx].baseSpeed *
+            (state.raceFactors.get(idx) || 1);
           pos += baseMove;
 
           // Chance for boost or slip
