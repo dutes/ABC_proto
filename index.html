@@ -178,6 +178,46 @@
       transform: translateY(0);
     }
 
+    .burst {
+      position: absolute;
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #0c111b;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      border: 3px solid #0c111b;
+      transform: translate(-50%, 0) scale(0.4) rotate(-6deg);
+      animation: burstPop 850ms ease forwards;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .burst.boost {
+      background: radial-gradient(circle, #fff3ff 0%, #ffb7e1 90%);
+      box-shadow: 0 12px 22px rgba(255, 79, 139, 0.35);
+    }
+
+    .burst.slip {
+      background: radial-gradient(circle, #fff6f1 0%, #ffd5a8 90%);
+      box-shadow: 0 12px 22px rgba(255, 163, 79, 0.28);
+    }
+
+    @keyframes burstPop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 6px) scale(0.4) rotate(-6deg);
+      }
+      45% {
+        opacity: 1;
+        transform: translate(-50%, -6px) scale(1.05) rotate(1deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -28px) scale(0.65) rotate(-4deg);
+      }
+    }
+
     .controls {
       display: grid;
       grid-template-columns: 1fr;
@@ -364,6 +404,11 @@
       { name: "Jester", emoji: "🤡", odds: "8/1", color: "#ffd6f2" },
     ];
 
+    const burstWords = {
+      boost: ["BAF!", "WHOOSH!", "BING!", "ZAP!", "KAPOW!"],
+      slip: ["SLIP!", "BONK!", "OOF!", "WOBBLE!", "UH-OH!"]
+    };
+
     const raceArea = document.getElementById("raceArea");
     const betting = document.getElementById("betting");
     const startBtn = document.getElementById("startBtn");
@@ -472,11 +517,11 @@
         lanes.forEach((lane, idx) => {
           const maxHeight = lane.clientHeight - 24; // padding for top line
           let pos = state.positions.get(idx) || 0;
-          const baseMove = Math.random() * 2.2 + 0.8;
+          const baseMove = Math.random() * 0.28 + 0.12;
           pos += baseMove;
 
           // Chance for boost or slip
-          if (Math.random() < 0.08) {
+          if (Math.random() < 0.03) {
             triggerRandomEventFor(idx, lane, pos);
           }
 
@@ -503,18 +548,36 @@
     function triggerRandomEventFor(index, lane, pos) {
       const bubble = lane.querySelector(".bubble");
       const isBoost = Math.random() > 0.45;
-      const delta = isBoost ? Math.random() * 6 + 3 : -(Math.random() * 4 + 2);
+      const delta = isBoost ? Math.random() * 8 + 6 : -(Math.random() * 6 + 4);
       const label = isBoost ? "BOOST!" : "SLIP!";
+      const burstLabel = isBoost
+        ? burstWords.boost[Math.floor(Math.random() * burstWords.boost.length)]
+        : burstWords.slip[Math.floor(Math.random() * burstWords.slip.length)];
+
       logEvent(`${climbers[index].name} ${isBoost ? "got a" : "had a"} ${label}`);
 
       const newPos = Math.max(0, pos + delta);
       state.positions.set(index, newPos);
 
+      createBurst(lane, newPos, burstLabel, isBoost);
+
       // Show bubble briefly
       bubble.textContent = label;
-      bubble.style.background = isBoost ? "#1c9fff" : "#ff4f4f";
+      bubble.style.background = isBoost ? "#1c9fff" : "#ff7a3d";
       bubble.classList.add("show");
       setTimeout(() => bubble.classList.remove("show"), 700);
+    }
+
+    function createBurst(lane, pos, text, isBoost) {
+      const burst = document.createElement("div");
+      burst.className = `burst ${isBoost ? "boost" : "slip"}`;
+      burst.textContent = text;
+      const boundedBottom = Math.min(pos + 26, lane.clientHeight - 18);
+      burst.style.bottom = `${boundedBottom}px`;
+      burst.style.left = `${20 + Math.random() * 60}%`;
+      burst.style.fontSize = `${18 + Math.random() * 12}px`;
+      lane.appendChild(burst);
+      setTimeout(() => burst.remove(), 900);
     }
 
     // Stop race and show result
