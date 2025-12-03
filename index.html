@@ -394,26 +394,71 @@
     .result-card {
       background: white;
       border-radius: 18px;
-      padding: 18px 22px;
+      padding: 24px;
       text-align: center;
       border: 2px solid var(--border);
       box-shadow: 0 16px 36px rgba(12, 17, 27, 0.28);
-      max-width: 320px;
+      width: 100%;
+      max-width: 360px;
     }
 
     .result-card h3 {
-      margin: 0 0 8px;
+      margin: 0 0 16px;
+      font-size: 24px;
+      color: var(--text);
+    }
+
+    .result-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+      text-align: left;
+      background: #f4f7fd;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #dae3f0;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .result-label {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .result-value {
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .result-value.win {
+      color: #00b862;
+    }
+
+    .result-value.loss {
+      color: #d7263d;
     }
 
     .result-card button {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
       border: none;
       background: #ff7ab6;
       color: #fff;
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: 800;
       cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .result-card button:hover {
+      transform: translateY(-1px);
     }
 
     @media (max-width: 700px) {
@@ -533,7 +578,7 @@
         <div class="result-banner" id="resultBanner">
           <div class="result-card">
             <h3 id="resultTitle"></h3>
-            <p id="resultText"></p>
+            <div id="resultBody"></div>
             <button id="closeResult">Close</button>
           </div>
         </div>
@@ -570,7 +615,7 @@
     const raceLog = document.getElementById("raceLog");
     const resultBanner = document.getElementById("resultBanner");
     const resultTitle = document.getElementById("resultTitle");
-    const resultText = document.getElementById("resultText");
+    const resultBody = document.getElementById("resultBody");
     const closeResult = document.getElementById("closeResult");
     const walletAmountEl = document.getElementById("walletAmount");
     const stakeControlsEl = document.getElementById("stakeControls");
@@ -898,14 +943,37 @@
 
       highlightWinningLane(winningIndex);
 
-      resultTitle.textContent = won ? "You win!" : "Race finished";
-      resultText.textContent = won
-        ? `You picked ${picked.name} at ${oddsUsed}. Winner: ${winningClimber.name}. You staked $${formatMoney(
-          currentStake
-        )} and received a total payout of $${formatMoney(payout)} (net +$${formatMoney(net)}).`
-        : `You picked ${picked.name} at ${oddsUsed}. Winner: ${winningClimber.name}. You lose your stake of $${formatMoney(
-          currentStake
-        )}.`;
+      resultTitle.textContent = won ? "You Win! 🎉" : "Race Finished";
+
+      const netClass = net >= 0 ? "win" : "loss";
+      const netSign = net >= 0 ? "+" : "-";
+      const netAbs = Math.abs(net);
+
+      resultBody.innerHTML = `
+        <div class="result-grid">
+          <div class="result-row">
+            <span class="result-label">Winner</span>
+            <span class="result-value">${winningClimber.emoji} ${winningClimber.name}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Your Pick</span>
+            <span class="result-value">${picked.emoji} ${picked.name} (${oddsUsed})</span>
+          </div>
+          <div class="result-row">
+             <span class="result-label">Stake</span>
+             <span class="result-value">$${formatMoney(currentStake)}</span>
+          </div>
+          <div class="result-row">
+             <span class="result-label">Total Payout</span>
+             <span class="result-value">$${formatMoney(won ? payout : 0)}</span>
+          </div>
+          <div class="result-row">
+             <span class="result-label">Net Result</span>
+             <span class="result-value ${netClass}">${netSign}$${formatMoney(netAbs)}</span>
+          </div>
+        </div>
+      `;
+
       resultBanner.classList.add("show");
       resetUI();
     }
