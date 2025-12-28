@@ -220,6 +220,12 @@
       bottom: 0;
       width: 64px;
       height: 64px;
+      background-color: white;
+      /* Keep white bg for the assets since they have white bg */
+      border: 2px solid #5d4037;
+      border-radius: 8px;
+      /* Rounded card style */
+      overflow: hidden;
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center bottom;
@@ -365,23 +371,27 @@
       align-items: center;
       padding: 10px 12px;
       border-radius: 12px;
-      border: 2px solid #c2cde0;
-      background: #f4f7fd;
+      border: 2px solid #5d4037;
+      background: #2a1b3d;
+      /* Dark to match theme */
       cursor: pointer;
       transition: all 0.18s ease;
       font-weight: 700;
       color: var(--text);
+      /* Light text */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
 
     .bet-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      border-color: var(--accent);
     }
 
     .bet-btn.selected {
       border-color: var(--accent);
-      background: #ffe6f4;
-      box-shadow: 0 10px 22px rgba(255, 106, 170, 0.35);
+      background: #4a1c40;
+      box-shadow: 0 0 12px var(--accent-glow);
     }
 
     .odds {
@@ -452,20 +462,23 @@
     }
 
     .result-card {
-      background: white;
+      background: var(--panel);
       border-radius: 18px;
       padding: 24px;
       text-align: center;
-      border: 2px solid var(--border);
-      box-shadow: 0 16px 36px rgba(12, 17, 27, 0.28);
+      border: 2px solid var(--accent);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
       width: 100%;
       max-width: 360px;
+      color: var(--text);
     }
 
     .result-card h3 {
       margin: 0 0 16px;
-      font-size: 24px;
-      color: var(--text);
+      font-family: "Rye", serif;
+      font-size: 32px;
+      color: var(--accent);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     .result-grid {
@@ -473,10 +486,10 @@
       gap: 12px;
       margin-bottom: 20px;
       text-align: left;
-      background: #f4f7fd;
+      background: rgba(0, 0, 0, 0.3);
       padding: 16px;
       border-radius: 12px;
-      border: 1px solid #dae3f0;
+      border: 1px solid #5d4037;
     }
 
     .result-row {
@@ -1054,7 +1067,8 @@
       `;
 
       resultBanner.classList.add("show");
-      resetUI();
+      // Delay reset until user closes modal
+      // resetUI(); 
     }
 
     function parseOdds(odds) {
@@ -1117,6 +1131,7 @@
     closeResult.addEventListener("click", () => {
       resultBanner.classList.remove("show");
       startBtn.disabled = false;
+      resetUI(); // Reset here so user can see the finish state until they close
     });
 
     // Hook up start button
