@@ -231,29 +231,31 @@
       text-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     }
 
-    .climber {
+    .climber-container {
       position: absolute;
       bottom: 0;
       width: 64px;
       height: 64px;
+      z-index: 5;
+      /* only transform is set via JS */
+      transition: transform 0.2s linear;
+    }
+
+    .climber-sprite {
+      width: 100%;
+      height: 100%;
       background-color: white;
-      /* Keep white bg for the assets since they have white bg */
       border: 2px solid #5d4037;
       border-radius: 8px;
-      /* Rounded card style */
-      overflow: hidden;
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center bottom;
       filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
-      transition: transform 0.2s linear;
-      /* Smooth linear move */
-      z-index: 5;
+      overflow: hidden;
     }
 
-    .climber span {
+    .climber-container span {
       display: none;
-      /* Hide old text/emoji */
     }
 
     /* Climb Animation */
@@ -279,7 +281,7 @@
       }
     }
 
-    .climber.moving {
+    .climber-sprite.moving {
       animation: climb 0.4s infinite linear;
     }
 
@@ -748,12 +750,16 @@
         lane.dataset.index = index;
         lane.style.backgroundColor = climber.color;
 
-        // Climber element
+        // Climber element wrapper (positioning)
         const climberEl = document.createElement("div");
-        climberEl.className = "climber";
-        // climberEl.innerHTML = `<span>${climber.emoji}</span><span>${climber.name}</span>`;
-        climberEl.style.backgroundImage = `url('${climber.asset}')`;
+        climberEl.className = "climber-container";
         climberEl.dataset.index = index;
+
+        // Climber sprite (animation + image)
+        const sprite = document.createElement("div");
+        sprite.className = "climber-sprite";
+        sprite.style.backgroundImage = `url('${climber.asset}')`;
+        climberEl.appendChild(sprite);
 
         // Speech bubble for events
         const bubble = document.createElement("div");
@@ -907,10 +913,11 @@
     // Main race loop using requestAnimationFrame for smoothness
     function runRace() {
       const lanes = Array.from(document.querySelectorAll(".lane"));
-      const climberEls = Array.from(document.querySelectorAll(".climber"));
+      const climberContainerEls = Array.from(document.querySelectorAll(".climber-container"));
+      const spriteEls = Array.from(document.querySelectorAll(".climber-sprite"));
 
       // Start hopping
-      climberEls.forEach(el => el.classList.add("moving"));
+      spriteEls.forEach(el => el.classList.add("moving"));
 
       const step = () => {
         lanes.forEach((lane, idx) => {
@@ -945,10 +952,11 @@
           pos = Math.min(pos, maxHeight);
           state.positions.set(idx, pos);
 
-          const climberEl = climberEls[idx];
+          const climberEl = climberContainerEls[idx];
+          const spriteEl = spriteEls[idx];
           climberEl.style.transform = `translateY(-${pos}px)`;
           if (pos >= maxHeight - 4) {
-            climberEl.classList.remove("moving");
+            spriteEl.classList.remove("moving");
             // ensure it stays at top visual
             climberEl.style.transform = `translateY(-${maxHeight}px)`;
             endRace(climbers[idx]);
@@ -1133,8 +1141,10 @@
       generateDynamicOdds();
       state.positions.forEach((_, idx) => state.positions.set(idx, 0));
       state.eventEffects.forEach((_, idx) => state.eventEffects.set(idx, { pausedUntil: 0, speedMult: 1, speedMultUntil: 0 }));
-      document.querySelectorAll(".climber").forEach((el) => {
+      document.querySelectorAll(".climber-container").forEach((el) => {
         el.style.transform = "translateY(0)";
+      });
+      document.querySelectorAll(".climber-sprite").forEach((el) => {
         el.classList.remove("moving");
       });
     }
