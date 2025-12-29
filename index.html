@@ -297,7 +297,8 @@
       /* Token shape */
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.5);
 
-      background-size: 70%;
+      background-size: 95%;
+      /* Bigger sprites inside token */
       background-repeat: no-repeat;
       background-position: center 60%;
       overflow: hidden;
@@ -1066,7 +1067,8 @@
             speedMult = effects.speedMult;
           }
 
-          const baseMove = (Math.random() * 0.24 + 0.12) *
+          // Speed increased to shorten race to ~10-12 seconds
+          const baseMove = (Math.random() * 0.5 + 0.3) *
             climbers[idx].baseSpeed *
             (state.raceFactors.get(idx) || 1) *
             speedMult;
