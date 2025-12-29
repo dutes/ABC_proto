@@ -35,7 +35,8 @@
       justify-content: center;
       background: var(--bg-gradient);
       color: var(--text);
-      overflow: hidden;
+      /* Allow scrolling if needed on small screens */
+      overflow-y: auto;
     }
 
     .confetti::before,
@@ -96,7 +97,12 @@
     .app {
       position: relative;
       width: 100%;
-      max-width: 740px;
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      /* Bigger box */
+      background: var(--panel);
+      border: 6px solid #4a3b2a;
       background: var(--panel);
       border: 6px solid #4a3b2a;
       outline: 4px solid var(--border);
@@ -125,10 +131,10 @@
       border-radius: 18px;
       padding: 16px;
       box-shadow: inset 0 12px 24px rgba(0, 0, 0, 0.06);
-      min-height: 360px;
-      display: grid;
-      grid-template-columns: 1fr 220px;
-      gap: 12px;
+      /* Vertical Stack Layout */
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .race-area {
@@ -136,43 +142,56 @@
       display: grid;
       /* Force 5 columns so they never wrap */
       grid-template-columns: repeat(5, 1fr);
-      gap: 4px;
-      /* Tighter gap */
+      gap: 16px;
+      /* Wider gap for clarity */
       align-items: end;
+      background: #1c1326;
+      /* Dark background behind ladders */
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
+      min-height: 400px;
     }
 
     .lane {
       position: relative;
       height: 320px;
       /* Ladder Style */
-      background-color: var(--lane-bg);
+      /* Ladder Style - Simplified and Distinct */
+      background-color: transparent;
+      /* See-through to track background */
       background-image:
-        /* Rungs - 3D Wood effect */
+        /* Rungs */
         linear-gradient(180deg,
-          rgba(0, 0, 0, 0.6) 0px,
-          transparent 3px,
-          transparent 12px,
-          rgba(0, 0, 0, 0.4) 15px),
-        repeating-linear-gradient(180deg,
-          #5d4037 0px,
-          #8d6e63 3px,
-          #8d6e63 12px,
-          #5d4037 15px,
           transparent 15px,
-          transparent 50px);
-      background-size: 100% 50px;
-      /* Borders act as the Rails */
-      border-left: 8px solid #3e2723;
-      border-right: 8px solid #3e2723;
-      border-top: none;
-      border-bottom: none;
-      border-radius: 4px;
+          #5d4037 15px, #5d4037 25px,
+          /* Wood Rung */
+          rgba(0, 0, 0, 0.3) 25px, rgba(0, 0, 0, 0.3) 27px,
+          /* Shadow */
+          transparent 27px),
+        /* Rails (Left and Right) */
+        linear-gradient(90deg,
+          #3e2723 0px, #5d4037 4px, #3e2723 12px,
+          /* Left Rail */
+          transparent 12px,
+          transparent calc(100% - 12px),
+          #3e2723 calc(100% - 12px), #5d4037 calc(100% - 4px), #3e2723 100%
+          /* Right Rail */
+        );
+      background-size: 100% 40px, 100% 100%;
+      /* Rungs repeat every 40px */
+
+      border: none;
+      /* Remove box border to stop 'book spine' look */
+
+      border-radius: 0;
       overflow: visible;
       display: flex;
       align-items: flex-end;
       justify-content: center;
       padding-bottom: 0;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+      box-shadow: none;
+      /* Remove inner shadow */
     }
 
     .lane.winner {
@@ -353,9 +372,16 @@
 
     .controls {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      align-content: start;
+      grid-template-columns: 1fr 300px;
+      /* Info left, Betting right */
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 800px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
     }
 
     .countdown {
@@ -367,7 +393,10 @@
     }
 
     .instructions {
-      text-align: center;
+      text-align: left;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 16px;
+      border-radius: 12px;
       display: grid;
       gap: 4px;
       font-weight: 700;
