@@ -134,8 +134,10 @@
     .race-area {
       position: relative;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
+      /* Force 5 columns so they never wrap */
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      /* Tighter gap */
       align-items: end;
     }
 
@@ -389,8 +391,9 @@
 
     .betting {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 8px;
+      /* Match the race area layout */
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
     }
 
     .bet-btn {
@@ -409,6 +412,12 @@
       /* Force white text */
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+      /* Stack vertically on small screens if text is too long */
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      font-size: 11px;
     }
 
     .bet-btn:hover {
@@ -572,8 +581,9 @@
         height: 260px;
       }
 
+      /* Keep 5 cols but maybe smaller font/gap if needed */
       .race-area {
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+        gap: 2px;
       }
     }
 
