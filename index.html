@@ -1050,7 +1050,7 @@
 
       const step = () => {
         lanes.forEach((lane, idx) => {
-          const maxHeight = lane.clientHeight - 130; // padding for climber height
+          const maxHeight = lane.clientHeight - 100; // padding for climber height
           let pos = state.positions.get(idx) || 0;
 
           const effects = state.eventEffects.get(idx);
