@@ -227,17 +227,9 @@
       }
     }
 
+    /* .finish-line Removed as requested */
     .finish-line {
-      position: absolute;
-      top: 8px;
-      left: 0;
-      right: 0;
-      height: 8px;
-      background: repeating-linear-gradient(90deg,
-          rgba(255, 102, 143, 0.9) 0 8px,
-          rgba(255, 255, 255, 0.9) 8px 16px);
-      box-shadow: 0 0 0 2px #ff6b9b inset;
-      z-index: 2;
+      display: none;
     }
 
     .finish-bell {
@@ -247,13 +239,41 @@
       transform: translateX(-50%);
       font-size: 28px;
       text-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+      z-index: 20;
+    }
+
+    /* Countdown Overlay */
+    .countdown-overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 80px;
+      font-weight: 900;
+      color: #ff4f8b;
+      text-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      z-index: 30;
+      pointer-events: none;
+    }
+
+    /* Previous Winner Flag */
+    .lane.prev-winner::before {
+      content: "🏁";
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+      opacity: 0.8;
     }
 
     .climber-container {
       position: absolute;
       bottom: 0;
-      width: 48px;
-      height: 48px;
+      width: 58px;
+      /* Increased size */
+      height: 58px;
       z-index: 5;
       /* only transform is set via JS */
       transition: transform 0.2s linear;
@@ -742,11 +762,12 @@
       <div class="title">Always Be Climbing</div>
       <div class="race-wrapper">
         <div class="race-area" id="raceArea">
-          <div class="finish-line"></div>
+          <!-- <div class="finish-line"></div> -->
           <div class="finish-bell">🔔</div>
+          <div class="countdown-overlay" id="countdownOverlay"></div>
         </div>
         <div class="controls">
-          <div class="countdown" id="countdown"></div>
+          <!-- <div class="countdown" id="countdown"></div> -->
 
           <!-- Betting Board -->
           <div class="betting-section">
@@ -811,7 +832,7 @@
     const raceArea = document.getElementById("raceArea");
     const betting = document.getElementById("betting");
     const startBtn = document.getElementById("startBtn");
-    const countdownEl = document.getElementById("countdown");
+    const countdownEl = document.getElementById("countdownOverlay");
     const warningEl = document.getElementById("warning");
     const raceLog = document.getElementById("raceLog");
     const resultBanner = document.getElementById("resultBanner");
@@ -829,7 +850,10 @@
       racing: false,
       raceFactors: new Map(),
       currentOdds: new Map(),
+      raceFactors: new Map(),
+      currentOdds: new Map(),
       eventEffects: new Map(), // index -> { pausedUntil: timestamp, speedMult: number, speedMultUntil: timestamp }
+      lastWinner: null // Track previous winner
     };
 
     // Build the lane elements and bet buttons
@@ -961,8 +985,14 @@
       wallet -= currentStake;
       updateWalletUI();
 
+      wallet -= currentStake;
+      updateWalletUI();
+
       warningEl.textContent = "";
-      clearWinningLane();
+      clearWinningLane(); // Clear any visual effects
+      // Also clear previous winner flag on start
+      document.querySelectorAll(".lane.prev-winner").forEach(el => el.classList.remove("prev-winner"));
+
       startBtn.disabled = true;
       disableBetButtons(true);
       prepareRaceDynamics();
@@ -1012,7 +1042,7 @@
 
       const step = () => {
         lanes.forEach((lane, idx) => {
-          const maxHeight = lane.clientHeight - 48; // padding for climber height
+          const maxHeight = lane.clientHeight - 58; // padding for climber height
           let pos = state.positions.get(idx) || 0;
 
           const effects = state.eventEffects.get(idx);
@@ -1148,6 +1178,7 @@
       state.racing = false;
       cancelAnimationFrame(state.raceTimer);
       const winningIndex = climbers.indexOf(winningClimber);
+      state.lastWinner = winningIndex; // Store winner
       const picked = climbers[state.selected];
       const won = picked === winningClimber;
       const oddsUsed = state.currentOdds.get(state.selected);
@@ -1238,6 +1269,11 @@
       document.querySelectorAll(".climber-sprite").forEach((el) => {
         el.classList.remove("moving");
       });
+
+      // Mark previous winner
+      if (state.lastWinner !== null) {
+        document.querySelector(`.lane[data-index="${state.lastWinner}"]`).classList.add("prev-winner");
+      }
     }
 
     function disableBetButtons(disabled) {
