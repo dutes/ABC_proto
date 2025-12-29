@@ -231,8 +231,8 @@
     .climber-container {
       position: absolute;
       bottom: 0;
-      width: 64px;
-      height: 64px;
+      width: 48px;
+      height: 48px;
       z-index: 5;
       /* only transform is set via JS */
       transition: transform 0.2s linear;
@@ -921,7 +921,7 @@
 
       const step = () => {
         lanes.forEach((lane, idx) => {
-          const maxHeight = lane.clientHeight - 64; // padding for climber height
+          const maxHeight = lane.clientHeight - 48; // padding for climber height
           let pos = state.positions.get(idx) || 0;
 
           const effects = state.eventEffects.get(idx);
