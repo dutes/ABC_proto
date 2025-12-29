@@ -144,18 +144,21 @@
       grid-template-columns: repeat(5, 1fr);
       gap: 16px;
       /* Wider gap for clarity */
-      align-items: end;
+      align-items: stretch;
+      /* Stretch ladders to top */
       background: #1c1326;
       /* Dark background behind ladders */
       border-radius: 12px;
-      padding: 20px;
+      padding: 10px 20px 20px 20px;
+      /* Reduced top padding */
       box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
-      min-height: 400px;
+      min-height: 450px;
     }
 
     .lane {
       position: relative;
-      height: 320px;
+      height: 100%;
+      /* Stretch to fill container */
       /* Ladder Style */
       /* Ladder Style - Simplified and Distinct */
       background-color: transparent;
@@ -232,14 +235,9 @@
       display: none;
     }
 
+    /* .finish-bell removed */
     .finish-bell {
-      position: absolute;
-      top: -18px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 28px;
-      text-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-      z-index: 20;
+      display: none;
     }
 
     /* Countdown Overlay */
@@ -257,23 +255,33 @@
     }
 
     /* Previous Winner Flag */
-    .lane.prev-winner::before {
-      content: "🏁";
+    /* Previous Winner Strap */
+    .lane.prev-winner::after {
+      content: "PREVIOUS WINNER";
       position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 24px;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-      opacity: 0.8;
+      top: 60px;
+      left: -4px;
+      right: -4px;
+      height: 24px;
+      background: repeating-linear-gradient(45deg, #000 0, #000 10px, #fff 10px, #fff 20px);
+      color: #000;
+      font-weight: 800;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      transform: rotate(-2deg);
+      border: 2px solid white;
     }
 
     .climber-container {
       position: absolute;
       bottom: 0;
-      width: 58px;
-      /* Increased size */
-      height: 58px;
+      width: 130px;
+      /* Fills most of the lane */
+      height: 130px;
       z-index: 5;
       /* only transform is set via JS */
       transition: transform 0.2s linear;
@@ -763,7 +771,7 @@
       <div class="race-wrapper">
         <div class="race-area" id="raceArea">
           <!-- <div class="finish-line"></div> -->
-          <div class="finish-bell">🔔</div>
+          <!-- Bell Removed -->
           <div class="countdown-overlay" id="countdownOverlay"></div>
         </div>
         <div class="controls">
@@ -1042,7 +1050,7 @@
 
       const step = () => {
         lanes.forEach((lane, idx) => {
-          const maxHeight = lane.clientHeight - 58; // padding for climber height
+          const maxHeight = lane.clientHeight - 130; // padding for climber height
           let pos = state.positions.get(idx) || 0;
 
           const effects = state.eventEffects.get(idx);
