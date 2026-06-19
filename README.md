@@ -3,13 +3,16 @@
 A web-based betting and racing game prototype built with vanilla HTML, CSS, and JavaScript. 
 
 ## Overview
-"Always Be Climbing" is a fast-paced virtual racing game where players start with a virtual wallet and place bets on different climbers. Each climber has unique odds, base speeds, and dynamic crowd sentiment that affects their payout. 
+"Always Be Climbing" is a fast-paced virtual racing game where players start with a virtual wallet and place bets on one of five climbers. Each climber has a defined win probability and a distinct variance profile; the posted odds are derived from those probabilities plus a configurable house edge, so payouts are honest and the model is demonstrable.
 
 ## Features
-- **5 Unique Climbers:** Choose from Monkey, Dwarf, Goblin, Robot, and Jester, each with their own baseline speeds and changing odds.
-- **Dynamic Betting System:** Stake $5, $10, $25, or $50 from your virtual wallet. Payouts are calculated based on the climber's current odds.
-- **Live Race Events:** During the race, climbers can experience sudden bursts of speed ("WOOSH!", "ZOOM!"), slip backwards ("OOPS!", "SLIP!"), or stall. 
-- **Responsive UI:** A modern, fully responsive interface with custom CSS animations, real-time race logging, and a satisfying race finish experience.
+- **5 Unique Climbers:** Monkey, Dwarf, Goblin, Robot, and Jester, each with a named variance profile (Steady, Bursty, Wildcard, Clumsy, Trickster) that shapes how often they slip, boost, stall, or surge.
+- **Honest odds model:** Each climber has a true win probability (summing to 100%). Fixed-odds prices are computed from those probabilities with a target RTP (~92% / 8% house edge) and snapped to a real betting-shop fractional ladder. The winner is drawn from the same probabilities, so the displayed odds genuinely reflect the chance of winning.
+- **Two bet types:** Toggle between **Fixed Odds** (price locked when you bet) and **Parimutuel** (a live, illustrative tote pool where crowd money sets the odds and an 18% takeout applies).
+- **Bells & finish line:** The first climber to the top rings the bell, flashes the finish line, and triggers the payout.
+- **Dynamic Betting System:** Stake $5, $10, $25, or $50 from your virtual wallet.
+- **Live Race Events:** During the race, climbers experience bursts of speed ("WOOSH!", "ZOOM!"), slip backwards ("OOPS!", "SLIP!"), stall, or get a crowd hype boost.
+- **Responsive UI:** A fully responsive interface with custom CSS animations, real-time race logging, and a satisfying race finish.
 - **No Dependencies:** The entire game runs in a single `index.html` file using standard web technologies.
 
 ## How to Play
