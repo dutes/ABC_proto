@@ -259,7 +259,7 @@
     .lane.prev-winner::after {
       content: "";
       position: absolute;
-      top: 60px;
+      top: 10px;
       left: -6px;
       right: -6px;
       height: 28px;
@@ -280,8 +280,12 @@
     .climber-container {
       position: absolute;
       bottom: 0;
-      width: 100px;
-      height: 100px;
+      left: 0;
+      right: 0;
+      margin-inline: auto;
+      /* Scale token with lane width so 5 lanes never overlap on phones */
+      width: clamp(52px, 15vw, 100px);
+      height: clamp(52px, 15vw, 100px);
       z-index: 5;
       /* only transform is set via JS */
       transition: transform 0.2s linear;
@@ -671,17 +675,16 @@
     }
 
     @media (max-width: 700px) {
-      .race-wrapper {
-        grid-template-columns: 1fr;
+      /* Give the climb a real, viewport-relative height and let the
+         lanes stretch to fill it so there is no dead space below. */
+      .race-area {
+        min-height: 56vh;
+        gap: 6px;
+        padding: 10px 8px 14px;
       }
 
       .lane {
-        height: 260px;
-      }
-
-      /* Keep 5 cols but maybe smaller font/gap if needed */
-      .race-area {
-        gap: 2px;
+        height: 100%;
       }
     }
 
@@ -762,6 +765,190 @@
       border-color: #ffe082;
       box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
     }
+
+    /* ---- Bet type toggle (Fixed Odds vs Parimutuel) ---- */
+    .mode-toggle {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      max-width: 200px;
+      padding: 10px 12px;
+      border: 2px solid #5d4037;
+      background: #1c1326;
+      color: var(--muted);
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .mode-btn:hover {
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(135deg, #ff7ab6, #ff4f8b);
+      color: #fff;
+      border-color: #ffe082;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* Profile label on bet buttons */
+    .bet-btn .profile {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* ---- Tote / parimutuel pool panel ---- */
+    .pool-panel {
+      margin-top: 12px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid #5d4037;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .pool-panel.hidden {
+      display: none;
+    }
+
+    .pool-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pool-total {
+      font-family: monospace;
+      color: #4fffa7;
+      font-size: 15px;
+    }
+
+    .pool-row {
+      display: grid;
+      grid-template-columns: 64px 1fr 40px;
+      align-items: center;
+      gap: 8px;
+      border-radius: 6px;
+      padding: 2px 4px;
+      transition: background 0.2s;
+    }
+
+    .pool-row.flash {
+      background: rgba(255, 215, 0, 0.18);
+    }
+
+    .pool-name {
+      font-size: 12px;
+      font-weight: 700;
+      text-shadow: 0 1px 1px #000;
+    }
+
+    .pool-bar {
+      position: relative;
+      height: 10px;
+      background: #1c1326;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .pool-bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      border-radius: 6px;
+      transition: width 0.35s ease;
+    }
+
+    .pool-amt {
+      font-size: 12px;
+      font-weight: 700;
+      text-align: right;
+      color: var(--muted);
+      font-family: monospace;
+    }
+
+    /* ---- Finish line + bells ---- */
+    .finish-line {
+      display: block;
+      position: absolute;
+      top: 6px;
+      left: 12px;
+      right: 12px;
+      height: 14px;
+      border-radius: 4px;
+      z-index: 11;
+      background-image: repeating-linear-gradient(45deg, #111 0 7px, #fff 7px 14px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      opacity: 0.9;
+      transition: box-shadow 0.2s, opacity 0.2s;
+    }
+
+    .finish-line.flash {
+      opacity: 1;
+      box-shadow: 0 0 18px 4px var(--accent);
+    }
+
+    .lane-bell {
+      position: absolute;
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(18px, 5vw, 26px);
+      z-index: 12;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+      pointer-events: none;
+    }
+
+    .lane-bell.ring {
+      animation: bellRing 0.85s ease;
+    }
+
+    @keyframes bellRing {
+
+      0%,
+      100% {
+        transform: translateX(-50%) rotate(0);
+      }
+
+      12% {
+        transform: translateX(-50%) rotate(24deg) scale(1.25);
+      }
+
+      28% {
+        transform: translateX(-50%) rotate(-20deg) scale(1.2);
+      }
+
+      44% {
+        transform: translateX(-50%) rotate(15deg);
+      }
+
+      60% {
+        transform: translateX(-50%) rotate(-10deg);
+      }
+
+      76% {
+        transform: translateX(-50%) rotate(6deg);
+      }
+    }
   </style>
 </head>
 
@@ -771,8 +958,7 @@
       <div class="title">Always Be Climbing</div>
       <div class="race-wrapper">
         <div class="race-area" id="raceArea">
-          <!-- <div class="finish-line"></div> -->
-          <!-- Bell Removed -->
+          <div class="finish-line" id="finishLine"></div>
           <div class="countdown-overlay" id="countdownOverlay"></div>
         </div>
         <div class="controls">
@@ -780,8 +966,13 @@
 
           <!-- Betting Board -->
           <div class="betting-section">
+            <div class="mode-toggle" id="modeToggle">
+              <button class="mode-btn active" data-mode="fixed">Fixed Odds</button>
+              <button class="mode-btn" data-mode="parimutuel">Parimutuel</button>
+            </div>
             <div class="betting" id="betting"></div>
-            <div class="odds-tip">Select a climber (Shorter odds = safer, Longer odds = higher payout)</div>
+            <div class="odds-tip" id="oddsTip">Select a climber (Shorter odds = safer, Longer odds = higher payout)</div>
+            <div class="pool-panel hidden" id="poolPanel"></div>
           </div>
 
           <!-- Dashboard Panel -->
@@ -818,15 +1009,41 @@
   </div>
 
   <script>
-    // Simple climber data with emojis and fun odds text
+    // Each climber has a TRUE win probability (the honest model behind the
+    // odds) and a named variance profile that shapes its on-screen behaviour.
+    // winProb values sum to 1.0.
     const climbers = [
-      { name: "Monkey", asset: "assets/monkey.png", odds: "2/1", color: "#ffd166", baseSpeed: 1.08 },
-      { name: "Dwarf", asset: "assets/dwarf.png", odds: "5/1", color: "#9ad5ff", baseSpeed: 0.98 },
-      { name: "Goblin", asset: "assets/goblin.png", odds: "10/1", color: "#c2f5b6", baseSpeed: 0.92 },
-      { name: "Robot", asset: "assets/robot.png", odds: "4/1", color: "#e8e9ff", baseSpeed: 1.04 },
-      { name: "Jester", asset: "assets/jester.png", odds: "8/1", color: "#ffd6f2", baseSpeed: 0.95 },
+      { name: "Monkey", asset: "assets/monkey.png", color: "#ffd166", winProb: 0.32, profile: "Steady", pace: 1.05 },
+      { name: "Dwarf", asset: "assets/dwarf.png", color: "#9ad5ff", winProb: 0.22, profile: "Bursty", pace: 1.00 },
+      { name: "Goblin", asset: "assets/goblin.png", color: "#c2f5b6", winProb: 0.10, profile: "Wildcard", pace: 0.95 },
+      { name: "Robot", asset: "assets/robot.png", color: "#e8e9ff", winProb: 0.20, profile: "Clumsy", pace: 1.00 },
+      { name: "Jester", asset: "assets/jester.png", color: "#ffd6f2", winProb: 0.16, profile: "Trickster", pace: 0.98 },
     ];
 
+    // Variance profiles: eventRate scales how often micro-events fire, the
+    // weights bias which event type, and mag scales slip/boost magnitude.
+    const PROFILES = {
+      Steady: { eventRate: 0.55, weights: { slip: 0.2, boost: 0.4, stall: 0.2, cheer: 0.2 }, mag: 0.8 },
+      Bursty: { eventRate: 1.20, weights: { slip: 0.2, boost: 0.5, stall: 0.1, cheer: 0.2 }, mag: 1.1 },
+      Clumsy: { eventRate: 1.20, weights: { slip: 0.45, boost: 0.2, stall: 0.3, cheer: 0.05 }, mag: 1.0 },
+      Trickster: { eventRate: 1.50, weights: { slip: 0.3, boost: 0.3, stall: 0.15, cheer: 0.25 }, mag: 1.2 },
+      Wildcard: { eventRate: 1.90, weights: { slip: 0.35, boost: 0.35, stall: 0.1, cheer: 0.2 }, mag: 1.5 },
+    };
+
+    // Commercial model knobs.
+    const TARGET_RTP = 0.92;     // fixed-odds return-to-player (8% house edge)
+    const TOTE_TAKEOUT = 0.18;   // parimutuel pool takeout
+
+    // Standard betting-shop fractional odds ladder, used to snap computed
+    // odds to values a punter would actually recognise.
+    const ODDS_LADDER = [
+      [1, 4], [2, 7], [1, 3], [2, 5], [1, 2], [8, 13], [4, 6], [8, 11], [4, 5], [10, 11], [1, 1],
+      [11, 10], [6, 5], [5, 4], [11, 8], [6, 4], [13, 8], [7, 4], [15, 8], [2, 1], [9, 4], [5, 2],
+      [11, 4], [3, 1], [10, 3], [7, 2], [4, 1], [9, 2], [5, 1], [11, 2], [6, 1], [13, 2], [7, 1],
+      [15, 2], [8, 1], [9, 1], [10, 1], [11, 1], [12, 1], [14, 1], [16, 1], [18, 1], [20, 1], [25, 1]
+    ];
+
+    let bettingMode = "fixed"; // "fixed" | "parimutuel"
     let currentStake = 10;
     let wallet = 100;
     const STAKE_OPTIONS = [5, 10, 25, 50];
@@ -850,6 +1067,10 @@
     const closeResult = document.getElementById("closeResult");
     const walletAmountEl = document.getElementById("walletAmount");
     const stakeControlsEl = document.getElementById("stakeControls");
+    const modeToggle = document.getElementById("modeToggle");
+    const oddsTip = document.getElementById("oddsTip");
+    const poolPanel = document.getElementById("poolPanel");
+    const finishLine = document.getElementById("finishLine");
 
     const state = {
       selected: null,
@@ -858,11 +1079,14 @@
       inCountdown: false,
       racing: false,
       raceFactors: new Map(),
-      currentOdds: new Map(),
-      raceFactors: new Map(),
-      currentOdds: new Map(),
-      eventEffects: new Map(), // index -> { pausedUntil: timestamp, speedMult: number, speedMultUntil: timestamp }
-      lastWinner: null // Track previous winner
+      currentOdds: new Map(),      // index -> { display, decimal }
+      pool: new Map(),             // index -> dummy parimutuel stake
+      poolTicker: null,
+      eventEffects: new Map(),     // index -> { pausedUntil, speedMult, speedMultUntil }
+      predeterminedWinner: null,   // chosen up-front from winProb (keeps odds honest)
+      oddsUsedDecimal: null,
+      oddsUsedDisplay: null,
+      lastWinner: null             // previous winner
     };
 
     // Build the lane elements and bet buttons
@@ -889,7 +1113,14 @@
         const bubble = document.createElement("div");
         bubble.className = "bubble";
         bubble.dataset.index = index;
+
+        // Bell at the top of the lane — rung by the first climber to finish
+        const bell = document.createElement("div");
+        bell.className = "lane-bell";
+        bell.textContent = "🔔";
+
         lane.appendChild(bubble);
+        lane.appendChild(bell);
         lane.appendChild(climberEl);
         raceArea.appendChild(lane);
 
@@ -900,53 +1131,151 @@
         const btn = document.createElement("button");
         btn.className = "bet-btn";
         btn.dataset.index = index;
-        btn.innerHTML = `<span>${climber.name}</span><span class="odds">${climber.odds}</span>`;
         btn.addEventListener("click", () => selectClimber(index));
         betting.appendChild(btn);
       });
 
-      generateDynamicOdds();
+      // Bet-type toggle wiring
+      modeToggle.querySelectorAll(".mode-btn").forEach((b) => {
+        b.addEventListener("click", () => setMode(b.dataset.mode));
+      });
+
       renderStakeControls();
       updateWalletUI();
+      setMode("fixed");
     }
 
-    function generateDynamicOdds() {
-      // Simulate crowd sentiment changing odds
-      climbers.forEach((c, idx) => {
-        // Randomly shift odds slightly from base
-        // This is a simple visual/payout shift, not affecting actual win probability (which is baseSpeed)
-        // In a real game, lower odds = higher win prob. Here we just simulate the "Bookie" feel.
-        const sentiment = Math.random();
-        let newOdds = c.odds;
+    /* ---------- Odds models ---------- */
 
-        if (sentiment > 0.7) {
-          // Better odds (lower payout) - Crowd loves them
-          if (c.odds === "10/1") newOdds = "8/1";
-          else if (c.odds === "8/1") newOdds = "6/1";
-          else if (c.odds === "5/1") newOdds = "4/1";
-          else if (c.odds === "4/1") newOdds = "3/1";
-          else if (c.odds === "2/1") newOdds = "1/1";
-        } else if (sentiment < 0.3) {
-          // Worse odds (higher payout) - Crowd ignores them
-          if (c.odds === "2/1") newOdds = "3/1";
-          else if (c.odds === "4/1") newOdds = "5/1";
-          else if (c.odds === "5/1") newOdds = "6/1";
-          else if (c.odds === "8/1") newOdds = "10/1";
-          else if (c.odds === "10/1") newOdds = "12/1";
-        }
-        state.currentOdds.set(idx, newOdds);
+    // Snap a net multiplier (decimal - 1) to the nearest recognised fraction.
+    function snapToFraction(netMultiplier) {
+      let best = ODDS_LADDER[0];
+      let bestDiff = Infinity;
+      for (const [n, d] of ODDS_LADDER) {
+        const diff = Math.abs(n / d - netMultiplier);
+        if (diff < bestDiff) { bestDiff = diff; best = [n, d]; }
+      }
+      return best;
+    }
+
+    // Fixed-odds: derive odds from the true win probability plus the house edge.
+    function computeFixedOdds() {
+      const overround = 1 / TARGET_RTP;
+      climbers.forEach((c, idx) => {
+        const implied = c.winProb * overround; // inflated probability incl. margin
+        const decimal = 1 / implied;           // full decimal odds (includes stake)
+        const [n, d] = snapToFraction(decimal - 1);
+        state.currentOdds.set(idx, { display: `${n}/${d}`, decimal: 1 + n / d });
       });
+    }
+
+    // Parimutuel: odds come purely from the (dummy) pool, not probability.
+    function computeToteOdds() {
+      const total = poolTotal();
+      climbers.forEach((c, idx) => {
+        const pool = state.pool.get(idx) || 1;
+        const decimal = Math.max(1.1, (total * (1 - TOTE_TAKEOUT)) / pool);
+        state.currentOdds.set(idx, { display: `${decimal.toFixed(1)}x`, decimal });
+      });
+    }
+
+    function refreshOdds() {
+      if (bettingMode === "parimutuel") computeToteOdds();
+      else computeFixedOdds();
       updateBetButtons();
     }
 
     function updateBetButtons() {
-      document.querySelectorAll(".bet-btn").forEach(btn => {
+      document.querySelectorAll(".bet-btn").forEach((btn) => {
         const idx = Number(btn.dataset.index);
-        const odds = state.currentOdds.get(idx);
-        // Use strong colors for names
-        const color = climbers[idx].color;
-        btn.innerHTML = `<span style="color:${color}; text-shadow:0 1px 1px black">${climbers[idx].name}</span><span class="odds">${odds}</span>`;
+        const o = state.currentOdds.get(idx);
+        const c = climbers[idx];
+        btn.innerHTML =
+          `<span class="bet-name" style="color:${c.color}; text-shadow:0 1px 1px black">${c.name}</span>` +
+          `<span class="profile">${c.profile}</span>` +
+          `<span class="odds">${o ? o.display : ""}</span>`;
+        btn.classList.toggle("selected", idx === state.selected);
       });
+    }
+
+    /* ---------- Parimutuel pool (illustrative crowd betting) ---------- */
+
+    function weightedPick(weights) {
+      const sum = weights.reduce((a, b) => a + b, 0);
+      let r = Math.random() * sum;
+      for (let i = 0; i < weights.length; i++) {
+        r -= weights[i];
+        if (r <= 0) return i;
+      }
+      return weights.length - 1;
+    }
+
+    function poolTotal() {
+      let t = 0;
+      state.pool.forEach((v) => (t += v));
+      return t;
+    }
+
+    function seedPool() {
+      state.pool = new Map();
+      climbers.forEach((c, idx) => {
+        // Crowd money loosely tracks the fancied runners, plus noise.
+        state.pool.set(idx, Math.round(150 + c.winProb * 1800 + Math.random() * 180));
+      });
+    }
+
+    // Dummy "crowd is betting" action: nudges the pool while the player decides.
+    function startPoolTicker() {
+      stopPoolTicker();
+      state.poolTicker = setInterval(() => {
+        if (state.racing || state.inCountdown) return;
+        const idx = weightedPick(climbers.map((c) => c.winProb));
+        state.pool.set(idx, (state.pool.get(idx) || 0) + [10, 20, 25, 50][Math.floor(Math.random() * 4)]);
+        computeToteOdds();
+        updateBetButtons();
+        renderPoolPanel(idx);
+      }, 850);
+    }
+
+    function stopPoolTicker() {
+      if (state.poolTicker) { clearInterval(state.poolTicker); state.poolTicker = null; }
+    }
+
+    function renderPoolPanel(flashIdx) {
+      const total = poolTotal();
+      poolPanel.innerHTML =
+        `<div class="pool-head"><span>💰 Tote pool — live crowd bets</span>` +
+        `<span class="pool-total">$${total.toLocaleString()}</span></div>` +
+        climbers.map((c, idx) => {
+          const amt = state.pool.get(idx) || 0;
+          const pct = total ? (amt / total) * 100 : 0;
+          return `<div class="pool-row ${idx === flashIdx ? "flash" : ""}">` +
+            `<span class="pool-name" style="color:${c.color}">${c.name}</span>` +
+            `<span class="pool-bar"><span class="pool-bar-fill" style="width:${pct.toFixed(0)}%;background:${c.color}"></span></span>` +
+            `<span class="pool-amt">${pct.toFixed(0)}%</span></div>`;
+        }).join("");
+    }
+
+    function setMode(mode) {
+      if (state.racing || state.inCountdown) return;
+      bettingMode = mode;
+      modeToggle.querySelectorAll(".mode-btn").forEach((b) =>
+        b.classList.toggle("active", b.dataset.mode === mode));
+
+      if (mode === "parimutuel") {
+        poolPanel.classList.remove("hidden");
+        seedPool();
+        computeToteOdds();
+        renderPoolPanel();
+        startPoolTicker();
+        oddsTip.textContent = `Parimutuel — payouts set by the crowd's pool at race time (${Math.round(TOTE_TAKEOUT * 100)}% takeout)`;
+      } else {
+        poolPanel.classList.add("hidden");
+        stopPoolTicker();
+        computeFixedOdds();
+        oddsTip.textContent = `Fixed odds — payout locked when you bet (house edge ~${Math.round((1 - TARGET_RTP) * 100)}%)`;
+      }
+      updateBetButtons();
     }
 
     function renderStakeControls() {
@@ -994,13 +1323,27 @@
       wallet -= currentStake;
       updateWalletUI();
 
-      wallet -= currentStake;
-      updateWalletUI();
-
       warningEl.textContent = "";
       clearWinningLane(); // Clear any visual effects
       // Also clear previous winner flag on start
       document.querySelectorAll(".lane.prev-winner").forEach(el => el.classList.remove("prev-winner"));
+
+      // In parimutuel the crowd betting closes and the player's stake joins
+      // the pool, which sets the final tote odds used for payout.
+      if (bettingMode === "parimutuel") {
+        stopPoolTicker();
+        state.pool.set(state.selected, (state.pool.get(state.selected) || 0) + currentStake);
+        computeToteOdds();
+        renderPoolPanel(state.selected);
+        logEvent("Pool closed — odds locked.");
+      }
+
+      // Lock the odds the player is paid at, and pick the winner up-front from
+      // the true win probabilities so the posted odds stay honest.
+      const lockedOdds = state.currentOdds.get(state.selected);
+      state.oddsUsedDecimal = lockedOdds.decimal;
+      state.oddsUsedDisplay = lockedOdds.display;
+      state.predeterminedWinner = weightedPick(climbers.map((c) => c.winProb));
 
       startBtn.disabled = true;
       disableBetButtons(true);
@@ -1040,18 +1383,23 @@
       state.raceFactors = raceFactors;
     }
 
-    // Main race loop using requestAnimationFrame for smoothness
+    // Main race loop using requestAnimationFrame for smoothness.
+    // The winner is predetermined (from win probabilities), so non-winners are
+    // held just below the bell — every climber still moves dynamically and the
+    // micro-events are pure spectacle that can't change the honest outcome.
     function runRace() {
       const lanes = Array.from(document.querySelectorAll(".lane"));
       const climberContainerEls = Array.from(document.querySelectorAll(".climber-container"));
       const spriteEls = Array.from(document.querySelectorAll(".climber-sprite"));
+      const winnerIdx = state.predeterminedWinner;
 
       // Start hopping
       spriteEls.forEach(el => el.classList.add("moving"));
 
       const step = () => {
         lanes.forEach((lane, idx) => {
-          const maxHeight = lane.clientHeight - 100; // padding for climber height
+          // Reserve the climber's actual height (it scales on small screens)
+          const maxHeight = lane.clientHeight - climberContainerEls[idx].offsetHeight;
           let pos = state.positions.get(idx) || 0;
 
           const effects = state.eventEffects.get(idx);
@@ -1067,30 +1415,40 @@
             speedMult = effects.speedMult;
           }
 
-          // Speed increased to shorten race to ~10-12 seconds
-          const baseMove = (Math.random() * 0.5 + 0.3) *
-            climbers[idx].baseSpeed *
+          const isWinner = idx === winnerIdx;
+          // Winner pulls ahead naturally; others can't cross the finish.
+          const destinyBias = isWinner ? 1.12 : 0.95;
+          const ceiling = isWinner ? maxHeight : maxHeight - Math.max(22, climberContainerEls[idx].offsetHeight * 0.35);
+
+          let baseMove = (Math.random() * 0.5 + 0.3) *
+            climbers[idx].pace *
             (state.raceFactors.get(idx) || 1) *
-            speedMult;
+            speedMult * destinyBias;
+
+          // Non-winners ease off as they approach their ceiling so they hover
+          // just below the bell rather than slamming into it.
+          if (!isWinner && pos > ceiling - 40) baseMove *= 0.3;
+
           pos += baseMove;
 
-          // Chance for random event
-          if (Math.random() < 0.025) {
-            triggerRandomEventFor(idx, lane, pos);
+          // Profile-tuned chance for a micro-event (returns a position delta).
+          const prof = PROFILES[climbers[idx].profile];
+          if (Math.random() < 0.02 * prof.eventRate) {
+            pos += triggerRandomEventFor(idx, lane, pos);
           }
 
-          // Clamp so we don't exceed lane height
-          pos = Math.min(pos, maxHeight);
+          pos = Math.max(0, Math.min(pos, ceiling));
           state.positions.set(idx, pos);
 
           const climberEl = climberContainerEls[idx];
           const spriteEl = spriteEls[idx];
           climberEl.style.transform = `translateY(-${pos}px)`;
-          if (pos >= maxHeight - 4) {
+
+          if (isWinner && pos >= maxHeight - 3) {
             spriteEl.classList.remove("moving");
-            // ensure it stays at top visual
             climberEl.style.transform = `translateY(-${maxHeight}px)`;
-            endRace(climbers[idx]);
+            ringBell(idx);
+            endRace(idx);
           }
         });
 
@@ -1102,50 +1460,71 @@
       state.raceTimer = requestAnimationFrame(step);
     }
 
-    // Random events
+    // Ring the winning lane's bell, flash the finish line, play a chime.
+    function ringBell(idx) {
+      const bell = document.querySelector(`.lane[data-index="${idx}"] .lane-bell`);
+      if (bell) {
+        bell.classList.add("ring");
+        setTimeout(() => bell.classList.remove("ring"), 850);
+      }
+      finishLine.classList.add("flash");
+      setTimeout(() => finishLine.classList.remove("flash"), 850);
+      playDing();
+    }
+
+    let audioCtx;
+    function playDing() {
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const t = audioCtx.currentTime;
+        [880, 1320].forEach((f, i) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = "sine";
+          o.frequency.value = f;
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          const start = t + i * 0.05;
+          g.gain.setValueAtTime(0.0001, start);
+          g.gain.exponentialRampToValueAtTime(0.25, start + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, start + 0.5);
+          o.start(start);
+          o.stop(start + 0.5);
+        });
+      } catch (e) { /* audio not available — no-op */ }
+    }
+
+    // Micro-events, weighted per character profile. Returns the position delta
+    // to apply to the climber this frame (0 for stall/cheer, which use timers).
     function triggerRandomEventFor(index, lane, pos) {
       const bubble = lane.querySelector(".bubble");
-      const rand = Math.random();
+      const prof = PROFILES[climbers[index].profile];
+      const order = ["slip", "boost", "stall", "cheer"];
+      const type = order[weightedPick(order.map((t) => prof.weights[t]))];
 
-      let type = "boost"; // default
       let label = "BOOST!";
       let color = "#1c9fff";
+      let delta = 0;
 
-      // 0.0 - 0.35: Slip
-      // 0.35 - 0.65: Boost
-      // 0.65 - 0.85: Loose Rung (Stall)
-      // 0.85 - 1.0: Crowd Cheer (Speed)
-
-      if (rand < 0.35) {
-        type = "slip";
+      if (type === "slip") {
         label = "SLIP!";
         color = "#ff7a3d";
-        const delta = -(Math.random() * 6 + 4);
-        const newPos = Math.max(0, pos + delta);
-        state.positions.set(index, newPos);
-        createBurst(lane, newPos, pickWord("slip"), false);
-      } else if (rand < 0.65) {
-        type = "boost";
+        delta = -(Math.random() * 6 + 4) * prof.mag;
+        createBurst(lane, Math.max(0, pos + delta), pickWord("slip"), false);
+      } else if (type === "boost") {
         label = "BOOST!";
         color = "#1c9fff";
-        const delta = Math.random() * 8 + 6;
-        const newPos = Math.max(0, pos + delta);
-        state.positions.set(index, newPos);
-        createBurst(lane, newPos, pickWord("boost"), true);
-      } else if (rand < 0.85) {
-        type = "stall";
+        delta = (Math.random() * 8 + 6) * prof.mag;
+        createBurst(lane, pos + delta, pickWord("boost"), true);
+      } else if (type === "stall") {
         label = "STUCK!";
         color = "#a0a0a0";
-        // Pause for 800-1200ms
-        const duration = 800 + Math.random() * 400;
         const effects = state.eventEffects.get(index);
-        effects.pausedUntil = Date.now() + duration;
+        effects.pausedUntil = Date.now() + (800 + Math.random() * 400);
         createBurst(lane, pos, pickWord("stall"), false);
       } else {
-        type = "cheer";
         label = "HYPE!";
         color = "#d94fff";
-        // Speed x1.5 for 2s
         const effects = state.eventEffects.get(index);
         effects.speedMult = 1.6;
         effects.speedMultUntil = Date.now() + 2000;
@@ -1159,6 +1538,8 @@
       bubble.style.background = color;
       bubble.classList.add("show");
       setTimeout(() => bubble.classList.remove("show"), 700);
+
+      return delta;
     }
 
     function pickWord(type) {
@@ -1183,17 +1564,17 @@
     }
 
     // Stop race and show result
-    function endRace(winningClimber) {
+    function endRace(winningIndex) {
       if (!state.racing) return;
       state.racing = false;
       cancelAnimationFrame(state.raceTimer);
-      const winningIndex = climbers.indexOf(winningClimber);
+      const winningClimber = climbers[winningIndex];
       state.lastWinner = winningIndex; // Store winner
       const picked = climbers[state.selected];
-      const won = picked === winningClimber;
-      const oddsUsed = state.currentOdds.get(state.selected);
-      const { num, den } = parseOdds(oddsUsed);
-      const payout = calculatePayout(num, den);
+      const won = state.selected === winningIndex;
+
+      // Payout uses the odds locked in at the start of the race.
+      const payout = Math.round(currentStake * state.oddsUsedDecimal);
 
       if (won) {
         wallet += payout;
@@ -1209,6 +1590,7 @@
       const netClass = net >= 0 ? "win" : "loss";
       const netSign = net >= 0 ? "+" : "-";
       const netAbs = Math.abs(net);
+      const modeLabel = bettingMode === "parimutuel" ? "Parimutuel" : "Fixed odds";
 
       resultBody.innerHTML = `
         <div class="result-grid">
@@ -1218,7 +1600,11 @@
           </div>
           <div class="result-row">
             <span class="result-label">Your Pick</span>
-            <span class="result-value"><img src="${picked.asset}" /> ${picked.name} (${oddsUsed})</span>
+            <span class="result-value"><img src="${picked.asset}" /> ${picked.name} (${state.oddsUsedDisplay})</span>
+          </div>
+          <div class="result-row">
+             <span class="result-label">Bet Type</span>
+             <span class="result-value">${modeLabel}</span>
           </div>
           <div class="result-row">
              <span class="result-label">Stake</span>
@@ -1236,19 +1622,7 @@
       `;
 
       resultBanner.classList.add("show");
-      // Delay reset until user closes modal
-      // resetUI(); 
-    }
-
-    function parseOdds(odds) {
-      const [num, den] = odds.split("/").map(Number);
-      return { num: num || 0, den: den || 1 };
-    }
-
-    function calculatePayout(num, den) {
-      if (!num || !den) return currentStake * 2;
-      const multiplier = num / den;
-      return Math.round(currentStake * (1 + multiplier));
+      // Reset is deferred until the user closes the modal.
     }
 
     function formatMoney(amount) {
@@ -1270,7 +1644,7 @@
     // Clear state for next race
     function resetUI() {
       disableBetButtons(false);
-      generateDynamicOdds();
+      clearWinningLane();
       state.positions.forEach((_, idx) => state.positions.set(idx, 0));
       state.eventEffects.forEach((_, idx) => state.eventEffects.set(idx, { pausedUntil: 0, speedMult: 1, speedMultUntil: 0 }));
       document.querySelectorAll(".climber-container").forEach((el) => {
@@ -1284,6 +1658,17 @@
       if (state.lastWinner !== null) {
         document.querySelector(`.lane[data-index="${state.lastWinner}"]`).classList.add("prev-winner");
       }
+
+      // Refresh odds for the next race; in parimutuel reopen the crowd betting.
+      if (bettingMode === "parimutuel") {
+        seedPool();
+        computeToteOdds();
+        renderPoolPanel();
+        startPoolTicker();
+      } else {
+        computeFixedOdds();
+      }
+      updateBetButtons();
     }
 
     function disableBetButtons(disabled) {
