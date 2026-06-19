@@ -339,6 +339,15 @@
       animation: climb 0.4s infinite linear;
     }
 
+    /* Emoji character token (used by reskinned themes that have no art) */
+    .climber-sprite.emoji {
+      display: grid;
+      place-items: center;
+      font-size: clamp(30px, 9vw, 54px);
+      line-height: 1;
+      background-image: none;
+    }
+
     .bubble {
       position: absolute;
       right: -6px;
@@ -714,6 +723,12 @@
     .result-value img {
       width: 32px;
       height: 32px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    .result-emoji {
+      font-size: 26px;
       vertical-align: middle;
       margin-right: 8px;
     }
@@ -1371,7 +1386,15 @@
           "--panel": "#2a1b3d", "--border": "#deb887", "--accent": "#ffd700",
           "--accent-glow": "#ff4f8b", "--text": "#fdf0ff", "--muted": "#a89bb0"
         },
-        palette: ["#ffd166", "#9ad5ff", "#c2f5b6", "#e8e9ff", "#ffd6f2"]
+        palette: ["#ffd166", "#9ad5ff", "#c2f5b6", "#e8e9ff", "#ffd6f2"],
+        // Default theme keeps the painted character art.
+        roster: [
+          { name: "Monkey", asset: "assets/monkey.png" },
+          { name: "Dwarf", asset: "assets/dwarf.png" },
+          { name: "Goblin", asset: "assets/goblin.png" },
+          { name: "Robot", asset: "assets/robot.png" },
+          { name: "Jester", asset: "assets/jester.png" }
+        ]
       },
       neon: {
         title: "Neon Circuit Climb",
@@ -1380,7 +1403,14 @@
           "--panel": "#10182e", "--border": "#2de2e6", "--accent": "#00e5ff",
           "--accent-glow": "#ff2bd6", "--text": "#eafcff", "--muted": "#8aa0c0"
         },
-        palette: ["#ffe14d", "#36d1ff", "#5cff9d", "#c08bff", "#ff6ad5"]
+        palette: ["#ffe14d", "#36d1ff", "#5cff9d", "#c08bff", "#ff6ad5"],
+        roster: [
+          { name: "Cypher", emoji: "🤖" },
+          { name: "Turbo", emoji: "🚀" },
+          { name: "Glitch", emoji: "👾" },
+          { name: "Clunk", emoji: "🦾" },
+          { name: "Joker", emoji: "🃏" }
+        ]
       },
       gold: {
         title: "Golden Festival Derby",
@@ -1389,18 +1419,50 @@
           "--panel": "#2b1d10", "--border": "#d9a441", "--accent": "#ffcf33",
           "--accent-glow": "#ff7a3d", "--text": "#fff6e6", "--muted": "#c2a77f"
         },
-        palette: ["#ffd166", "#ffb169", "#ffd98c", "#f7c59f", "#ffe2a8"]
+        palette: ["#ffd166", "#ffb169", "#ffd98c", "#f7c59f", "#ffe2a8"],
+        roster: [
+          { name: "Silk", emoji: "🏇" },
+          { name: "Dasher", emoji: "🐎" },
+          { name: "Longshot", emoji: "🦄" },
+          { name: "Trooper", emoji: "🐴" },
+          { name: "Stripes", emoji: "🦓" }
+        ]
       }
     };
+
+    // Paint a climber's token: either a PNG sprite or an emoji character.
+    function renderClimberSprite(i) {
+      const sprite = document.querySelector(`.lane[data-index="${i}"] .climber-sprite`);
+      if (!sprite) return;
+      const c = climbers[i];
+      if (c.emoji) {
+        sprite.classList.add("emoji");
+        sprite.style.backgroundImage = "none";
+        sprite.textContent = c.emoji;
+      } else {
+        sprite.classList.remove("emoji");
+        sprite.textContent = "";
+        sprite.style.backgroundImage = `url('${c.asset}')`;
+      }
+    }
+
+    // Icon markup for the result card (PNG or emoji).
+    function climberIcon(c) {
+      return c.emoji ? `<span class="result-emoji">${c.emoji}</span>` : `<img src="${c.asset}" />`;
+    }
 
     function applyTheme(key) {
       const t = THEMES[key] || THEMES.carnival;
       Object.entries(t.vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
       gameTitle.textContent = t.title;
-      t.palette.forEach((col, i) => {
-        climbers[i].color = col;
+      t.roster.forEach((r, i) => {
+        climbers[i].name = r.name;
+        climbers[i].emoji = r.emoji || null;
+        if (r.asset) climbers[i].asset = r.asset;
+        climbers[i].color = t.palette[i];
         const lane = document.querySelector(`.lane[data-index="${i}"]`);
-        if (lane) lane.style.backgroundColor = col;
+        if (lane) lane.style.backgroundColor = t.palette[i];
+        renderClimberSprite(i);
       });
       updateBetButtons();
       if (bettingMode === "parimutuel") renderPoolPanel();
@@ -1952,11 +2014,11 @@
         <div class="result-grid">
           <div class="result-row">
             <span class="result-label">Winner</span>
-            <span class="result-value"><img src="${winningClimber.asset}" /> ${winningClimber.name}</span>
+            <span class="result-value">${climberIcon(winningClimber)} ${winningClimber.name}</span>
           </div>
           <div class="result-row">
             <span class="result-label">Your Pick</span>
-            <span class="result-value"><img src="${picked.asset}" /> ${picked.name} (${state.oddsUsedDisplay})</span>
+            <span class="result-value">${climberIcon(picked)} ${picked.name} (${state.oddsUsedDisplay})</span>
           </div>
           <div class="result-row">
              <span class="result-label">Bet Type</span>
