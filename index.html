@@ -578,8 +578,9 @@
       border-radius: 12px;
       padding: 10px;
       font-size: 13px;
-      min-height: 120px;
-      max-height: 200px;
+      /* Fixed height so the panel never resizes as commentary streams in */
+      height: 150px;
+      flex: 0 0 auto;
       overflow-y: auto;
       box-shadow: inset 0 0 0 1px #203452;
     }
