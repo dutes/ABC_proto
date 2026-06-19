@@ -573,16 +573,10 @@
     }
 
     .race-log {
-      background: #0e1a2b;
-      color: #e9f0ff;
-      border-radius: 12px;
-      padding: 10px;
-      font-size: 13px;
-      /* Fixed height so the panel never resizes as commentary streams in */
-      height: 150px;
-      flex: 0 0 auto;
-      overflow-y: auto;
-      box-shadow: inset 0 0 0 1px #203452;
+      /* Hidden — events are already shown as on-lane bubbles and burst words.
+         The element is kept (display:none) so logEvent() stays a harmless no-op
+         and it can be re-enabled later if a commentary feed is wanted. */
+      display: none;
     }
 
     .result-banner {
