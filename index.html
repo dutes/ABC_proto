@@ -110,6 +110,10 @@
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 0, 0, 0.5);
       padding: clamp(12px, 3vw, 24px);
       display: grid;
+      /* minmax(0,1fr) lets the column shrink below its content's min width,
+         so the 5-lane race grid can't force the whole card wider than the
+         viewport (which pushed the top bar / sound button off the right). */
+      grid-template-columns: minmax(0, 1fr);
       gap: 16px;
       overflow: hidden;
     }
@@ -140,8 +144,8 @@
     .race-area {
       position: relative;
       display: grid;
-      /* Force 5 columns so they never wrap */
-      grid-template-columns: repeat(5, 1fr);
+      /* Force 5 columns so they never wrap; minmax(0,…) lets them shrink. */
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 16px;
       /* Wider gap for clarity */
       align-items: stretch;
@@ -511,7 +515,7 @@
     .betting {
       display: grid;
       /* Match the race area layout */
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 4px;
     }
 
@@ -1544,6 +1548,12 @@
     body.demo-overlay .present-close,
     body.demo-dialog .present-close {
       display: block;
+    }
+
+    /* Keep the game's own top controls clear of the close button. */
+    body.demo-overlay .topbar,
+    body.demo-dialog .topbar {
+      padding-right: 40px;
     }
   </style>
 </head>
