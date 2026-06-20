@@ -1532,11 +1532,11 @@
         },
         palette: ["#ffe14d", "#36d1ff", "#5cff9d", "#c08bff", "#ff6ad5"],
         roster: [
-          { name: "Cypher", build: "robot" },
-          { name: "Turbo", build: "robot" },
-          { name: "Glitch", build: "robot" },
-          { name: "Clunk", build: "robot" },
-          { name: "Joker", build: "robot" }
+          { name: "Cypher", build: "robot", variant: 0 },
+          { name: "Turbo", build: "robot", variant: 1 },
+          { name: "Glitch", build: "robot", variant: 2 },
+          { name: "Clunk", build: "robot", variant: 3 },
+          { name: "Joker", build: "robot", variant: 4 }
         ]
       },
       gold: {
@@ -1599,20 +1599,50 @@
           <circle cx="30" cy="39" r="1.7" fill="#3a2b22"/>
           <path d="M27 44 q3 2 6 0" stroke="#3a2b22" stroke-width="1.3" fill="none" stroke-linecap="round"/>
         </svg>`,
-      // Boxy retro robot.
-      robot: (c) => `
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <line x1="50" y1="14" x2="50" y2="26" stroke="#9aa3af" stroke-width="3"/>
-          <circle cx="50" cy="12" r="4" fill="${c}"/>
-          <rect x="30" y="24" width="40" height="30" rx="8" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
-          <rect x="35" y="31" width="30" height="14" rx="6" fill="#10182e"/>
-          <circle cx="44" cy="38" r="3.6" fill="${c}"/>
-          <circle cx="56" cy="38" r="3.6" fill="${c}"/>
+      // Boxy retro robot — `v` (0-4) gives each one a distinct head/antenna/face.
+      robot: (c, v = 0) => {
+        const body = `
           <rect x="22" y="58" width="9" height="22" rx="4" fill="#cfd6e4" stroke="#5b6472" stroke-width="1.5"/>
           <rect x="69" y="58" width="9" height="22" rx="4" fill="#cfd6e4" stroke="#5b6472" stroke-width="1.5"/>
           <rect x="34" y="56" width="32" height="28" rx="7" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
-          <rect x="44" y="62" width="12" height="10" rx="2" fill="rgba(255,255,255,.55)"/>
-        </svg>`,
+          <rect x="44" y="62" width="12" height="10" rx="2" fill="rgba(255,255,255,.55)"/>`;
+        const heads = [
+          // 0 — classic: single antenna, square head, two round eyes
+          `<line x1="50" y1="14" x2="50" y2="26" stroke="#9aa3af" stroke-width="3"/>
+           <circle cx="50" cy="12" r="4" fill="${c}"/>
+           <rect x="30" y="24" width="40" height="30" rx="8" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <rect x="35" y="31" width="30" height="14" rx="6" fill="#10182e"/>
+           <circle cx="44" cy="38" r="3.6" fill="${c}"/><circle cx="56" cy="38" r="3.6" fill="${c}"/>`,
+          // 1 — turbo: twin antennae, rounded head, swept "fast" eyes
+          `<line x1="40" y1="14" x2="36" y2="26" stroke="#9aa3af" stroke-width="3"/>
+           <line x1="60" y1="14" x2="64" y2="26" stroke="#9aa3af" stroke-width="3"/>
+           <circle cx="36" cy="12" r="3.5" fill="${c}"/><circle cx="64" cy="12" r="3.5" fill="${c}"/>
+           <rect x="28" y="24" width="44" height="30" rx="15" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <rect x="34" y="32" width="32" height="12" rx="6" fill="#10182e"/>
+           <polygon points="40,42 48,35 48,42" fill="${c}"/><polygon points="60,42 52,35 52,42" fill="${c}"/>`,
+          // 2 — glitch: jagged antenna, square head, mismatched eyes + zigzag mouth
+          `<polyline points="50,26 50,20 46,16 52,12 48,7" fill="none" stroke="#9aa3af" stroke-width="2.5"/>
+           <rect x="30" y="24" width="40" height="30" rx="4" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <rect x="35" y="30" width="30" height="13" rx="3" fill="#10182e"/>
+           <circle cx="43" cy="36" r="4.5" fill="${c}"/><rect x="53" y="34" width="8" height="4" fill="${c}"/>
+           <polyline points="38,49 42,46 46,49 50,46 54,49 58,46 62,49" fill="none" stroke="#5b6472" stroke-width="2"/>`,
+          // 3 — clunk: bent antenna, side bolts, single visor bar
+          `<path d="M50 26 L50 18 L57 14" fill="none" stroke="#9aa3af" stroke-width="3"/>
+           <circle cx="58" cy="13" r="3.5" fill="${c}"/>
+           <rect x="30" y="24" width="40" height="30" rx="6" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <circle cx="28" cy="39" r="3" fill="#9aa3af"/><circle cx="72" cy="39" r="3" fill="#9aa3af"/>
+           <rect x="35" y="34" width="30" height="9" rx="4" fill="#10182e"/>
+           <rect x="40" y="36" width="6" height="4" rx="2" fill="${c}"/><rect x="54" y="36" width="6" height="4" rx="2" fill="${c}"/>`,
+          // 4 — joker: coil antenna + star, triangular eyes, big smile
+          `<path d="M50 26 q-4 -3 0 -6 q4 -3 0 -6" fill="none" stroke="#9aa3af" stroke-width="2.5"/>
+           <path d="M50 6 l1.4 3 3.2 .3 -2.3 2.1 .7 3.1 -3-1.7 -3 1.7 .7-3.1 -2.3-2.1 3.2-.3z" fill="${c}"/>
+           <rect x="30" y="24" width="40" height="30" rx="11" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <rect x="35" y="30" width="30" height="13" rx="6" fill="#10182e"/>
+           <polygon points="40,33 47,33 43.5,40" fill="${c}"/><polygon points="53,33 60,33 56.5,40" fill="${c}"/>
+           <path d="M40 47 q10 7 20 0" fill="none" stroke="#5b6472" stroke-width="2" stroke-linecap="round"/>`
+        ];
+        return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${heads[v % heads.length]}${body}</svg>`;
+      },
       // Jockey bust in coloured silks + cap.
       jockey: (c) => `
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1635,7 +1665,7 @@
       const lane = document.querySelector(`.lane[data-index="${i}"]`);
       if (!lane) return;
       const balloon = lane.querySelector(".balloon");
-      const svg = c.build && SPRITE_BUILDERS[c.build] ? SPRITE_BUILDERS[c.build](c.color) : null;
+      const svg = c.build && SPRITE_BUILDERS[c.build] ? SPRITE_BUILDERS[c.build](c.color, c.variant || 0) : null;
 
       const paint = (el) => {
         if (!el) return;
@@ -1660,7 +1690,7 @@
 
     // Icon markup for the result card (vector sprite, PNG, or emoji).
     function climberIcon(c) {
-      if (c.build && SPRITE_BUILDERS[c.build]) return SPRITE_BUILDERS[c.build](c.color);
+      if (c.build && SPRITE_BUILDERS[c.build]) return SPRITE_BUILDERS[c.build](c.color, c.variant || 0);
       return c.emoji ? `<span class="result-emoji">${c.emoji}</span>` : `<img src="${c.asset}" />`;
     }
 
@@ -1674,6 +1704,7 @@
         climbers[i].name = r.name;
         climbers[i].emoji = r.emoji || null;
         climbers[i].build = r.build || null;
+        climbers[i].variant = r.variant || 0;
         if (r.asset) climbers[i].asset = r.asset;
         climbers[i].color = t.palette[i];
         const lane = document.querySelector(`.lane[data-index="${i}"]`);
