@@ -464,13 +464,21 @@
     }
 
     @media (max-width: 700px) {
+      /* Compact dashboard: wallet | stake on one row, lever full-width below. */
       .dashboard-panel {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        grid-template-columns: auto 1fr;
+        gap: 10px 14px;
+        padding: 12px;
+        align-items: start;
       }
 
       .action-group {
-        justify-self: center;
+        grid-column: 1 / -1;
+        justify-self: stretch;
+      }
+
+      .stake-btn {
+        padding: 7px 12px;
       }
     }
 
@@ -679,16 +687,59 @@
     }
 
     @media (max-width: 700px) {
-      /* Give the climb a real, viewport-relative height and let the
-         lanes stretch to fill it so there is no dead space below. */
+      /* Tighten the whole vertical rhythm so the bet controls and lever sit
+         near the fold instead of a long scroll down. */
+      .app {
+        gap: 10px;
+        padding: 12px;
+      }
+
+      .title {
+        margin-bottom: 2px;
+      }
+
+      .race-wrapper {
+        gap: 12px;
+      }
+
+      /* A shorter climb leaves room for the controls; lanes still fill it. */
       .race-area {
-        min-height: 56vh;
+        min-height: 40vh;
         gap: 6px;
-        padding: 10px 8px 14px;
+        padding: 10px 8px 12px;
       }
 
       .lane {
         height: 100%;
+      }
+
+      .controls {
+        gap: 10px;
+        margin-top: 6px;
+      }
+
+      .betting-section {
+        margin-bottom: 0;
+      }
+
+      .odds-tip {
+        margin-top: 6px;
+      }
+
+      /* Parimutuel pool is information-dense; compact it on phones.
+         Extra specificity so these win over the later base .pool-panel rules. */
+      .controls .pool-panel {
+        gap: 5px;
+        padding: 8px 10px;
+        margin-top: 8px;
+      }
+
+      .controls .pool-row {
+        grid-template-columns: 56px 1fr 32px;
+      }
+
+      .controls .pool-bar {
+        height: 8px;
       }
     }
 
@@ -1242,11 +1293,296 @@
         transform: translateX(-50%) translateY(3px) scale(0.93);
       }
     }
+
+    /* ---- Demo presentation harness (sportsbook placement views) ---- */
+    body {
+      padding-top: 46px;
+    }
+
+    .demo-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 46px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      background: #0c0a14;
+      border-bottom: 1px solid #2a2342;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .demo-bar-label {
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: #8a7fb0;
+      font-weight: 700;
+    }
+
+    .demo-modes {
+      display: flex;
+      gap: 6px;
+    }
+
+    .demo-mode {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 7px;
+      border: 1px solid #3a3157;
+      background: #171225;
+      color: #cfc6e8;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .demo-mode:hover {
+      border-color: #ff7ab6;
+    }
+
+    .demo-mode.active {
+      background: linear-gradient(135deg, #ff7ab6, #ff4f8b);
+      border-color: #ffd23f;
+      color: #fff;
+    }
+
+    .host {
+      position: fixed;
+      inset: 46px 0 0 0;
+      z-index: 1;
+      overflow-y: auto;
+      background: linear-gradient(#0e1424, #0a0f1c);
+      color: #dbe6ff;
+      display: none;
+      flex-direction: column;
+    }
+
+    body.demo-inframe .host,
+    body.demo-overlay .host,
+    body.demo-dialog .host {
+      display: flex;
+    }
+
+    .host-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #0b4fd0;
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .host-banner {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 16px;
+      background: #11203a;
+      font-size: 13px;
+      border-bottom: 1px solid #1b2840;
+    }
+
+    .host-live {
+      color: #ff5d5d;
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    .host-next {
+      margin-left: auto;
+      color: #9fb8e0;
+    }
+
+    .host-next strong {
+      color: #ffd23f;
+    }
+
+    .host-slot {
+      padding: 14px 14px 4px;
+    }
+
+    .host-slot-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffd23f;
+      margin: 0 0 8px 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .host-racecard {
+      padding: 10px 16px 50px;
+    }
+
+    .host-rc-title {
+      font-size: 12px;
+      color: #9bb0cc;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 6px 0 8px;
+    }
+
+    .rc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 4px;
+      border-bottom: 1px solid #1b2840;
+      font-size: 14px;
+    }
+
+    .rc-odds {
+      background: #16233c;
+      border: 1px solid #2c3e5c;
+      border-radius: 6px;
+      padding: 2px 9px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .demo-backdrop {
+      position: fixed;
+      inset: 46px 0 0 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 5;
+      display: none;
+    }
+
+    body.demo-overlay .demo-backdrop,
+    body.demo-dialog .demo-backdrop {
+      display: block;
+    }
+
+    /* In-frame: the game sits as a widget inside the racing feed */
+    body.demo-inframe .app-container {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    /* Overlay: slide-up bottom sheet over the racing page */
+    body.demo-overlay .app-container {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      width: 100%;
+      max-height: calc(100vh - 60px);
+      overflow-y: auto;
+      animation: sheetUp 0.3s ease;
+    }
+
+    body.demo-overlay .app {
+      border-radius: 22px 22px 0 0;
+    }
+
+    @keyframes sheetUp {
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    /* Pop-up: centred dialog over the racing page */
+    body.demo-dialog .app-container {
+      position: fixed;
+      top: calc(50% + 23px);
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      width: min(440px, 94vw);
+      max-height: calc(100vh - 70px);
+      overflow-y: auto;
+      animation: popIn 0.25s ease;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* The event shake would fight the fixed-position transform */
+    body.demo-overlay .app-container.shake,
+    body.demo-dialog .app-container.shake {
+      animation: none;
+    }
+
+    .present-close {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 40;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    body.demo-overlay .present-close,
+    body.demo-dialog .present-close {
+      display: block;
+    }
   </style>
 </head>
 
-<body class="confetti">
+<body class="confetti demo-standalone">
+  <!-- Demo harness: how the game would be surfaced inside a sportsbook -->
+  <div class="demo-bar">
+    <span class="demo-bar-label">👁 VIEW</span>
+    <div class="demo-modes" id="demoModes">
+      <button class="demo-mode active" data-mode="standalone">Standalone</button>
+      <button class="demo-mode" data-mode="inframe">In-frame</button>
+      <button class="demo-mode" data-mode="overlay">Overlay</button>
+      <button class="demo-mode" data-mode="dialog">Pop-up</button>
+    </div>
+  </div>
+
+  <!-- Mock sportsbook page (the host context the game is surfaced inside) -->
+  <div class="host" id="host" aria-hidden="true">
+    <div class="host-top"><span class="host-brand">🏇 RACEBOOK</span><span class="host-balance">£250.00</span></div>
+    <div class="host-banner">
+      <span class="host-live">● LIVE</span><span>Cheltenham Festival</span>
+      <span class="host-next">Next race <strong id="hostCountdown">18:42</strong></span>
+    </div>
+    <div class="host-slot" id="hostSlot">
+      <div class="host-slot-tag">★ Featured · play between races</div>
+    </div>
+    <div class="host-racecard">
+      <div class="host-rc-title">2:30 Cheltenham — Next Off</div>
+      <div class="rc-row"><span>1. Thunder Valley</span><span class="rc-odds">5/2</span></div>
+      <div class="rc-row"><span>2. Galway Bay</span><span class="rc-odds">7/2</span></div>
+      <div class="rc-row"><span>3. Midnight Run</span><span class="rc-odds">9/2</span></div>
+      <div class="rc-row"><span>4. Lucky Penny</span><span class="rc-odds">6/1</span></div>
+      <div class="rc-row"><span>5. Storm Chaser</span><span class="rc-odds">10/1</span></div>
+    </div>
+  </div>
+  <div class="demo-backdrop" id="demoBackdrop"></div>
+
   <div class="app-container">
+    <button class="present-close" id="presentClose" aria-label="Close">✕</button>
     <div class="app">
       <div class="topbar">
         <select class="theme-select" id="themeSelect" title="Event theme (reskin demo)">
@@ -2431,12 +2767,47 @@
     // Event theme switcher (persisted) — demonstrates the reskinnable engine.
     themeSelect.addEventListener("change", () => applyTheme(themeSelect.value));
 
+    /* ---------- Demo presentation modes ---------- */
+    // Shows how the game would be surfaced inside the sportsbook. Switching mode
+    // just moves the same game node, so play state is preserved throughout.
+    const appContainer = document.querySelector(".app-container");
+    const hostSlot = document.getElementById("hostSlot");
+    const demoBackdrop = document.getElementById("demoBackdrop");
+    const demoModes = document.getElementById("demoModes");
+    const presentClose = document.getElementById("presentClose");
+    const hostCountdown = document.getElementById("hostCountdown");
+    const PRESENT_MODES = ["standalone", "inframe", "overlay", "dialog"];
+
+    function setPresentation(mode) {
+      if (!PRESENT_MODES.includes(mode)) mode = "standalone";
+      PRESENT_MODES.forEach((m) => document.body.classList.toggle("demo-" + m, m === mode));
+      // In-frame embeds the game in the racing feed; other modes float it over the page.
+      if (mode === "inframe") hostSlot.appendChild(appContainer);
+      else document.body.appendChild(appContainer);
+      demoModes.querySelectorAll(".demo-mode").forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
+      try { localStorage.setItem("abc_present", mode); } catch (e) { /* ignore */ }
+    }
+
+    demoModes.querySelectorAll(".demo-mode").forEach((b) =>
+      b.addEventListener("click", () => setPresentation(b.dataset.mode)));
+    demoBackdrop.addEventListener("click", () => setPresentation("standalone"));
+    presentClose.addEventListener("click", () => setPresentation("standalone"));
+
+    // Mock "next race" countdown on the host page.
+    let hostSecs = 18 * 60 + 42;
+    setInterval(() => {
+      hostSecs = hostSecs <= 0 ? 20 * 60 : hostSecs - 1;
+      const m = Math.floor(hostSecs / 60), s = hostSecs % 60;
+      hostCountdown.textContent = `${m}:${String(s).padStart(2, "0")}`;
+    }, 1000);
+
     // Initialize
     setupClimbers();
     refreshSoundIcon();
     const savedTheme = localStorage.getItem("abc_theme") || "carnival";
     themeSelect.value = savedTheme;
     applyTheme(savedTheme);
+    setPresentation(localStorage.getItem("abc_present") || "standalone");
     logEvent("Welcome! Place your bet and start the race.");
   </script>
 </body>
