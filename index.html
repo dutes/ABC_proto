@@ -464,13 +464,21 @@
     }
 
     @media (max-width: 700px) {
+      /* Compact dashboard: wallet | stake on one row, lever full-width below. */
       .dashboard-panel {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        grid-template-columns: auto 1fr;
+        gap: 10px 14px;
+        padding: 12px;
+        align-items: start;
       }
 
       .action-group {
-        justify-self: center;
+        grid-column: 1 / -1;
+        justify-self: stretch;
+      }
+
+      .stake-btn {
+        padding: 7px 12px;
       }
     }
 
@@ -679,16 +687,59 @@
     }
 
     @media (max-width: 700px) {
-      /* Give the climb a real, viewport-relative height and let the
-         lanes stretch to fill it so there is no dead space below. */
+      /* Tighten the whole vertical rhythm so the bet controls and lever sit
+         near the fold instead of a long scroll down. */
+      .app {
+        gap: 10px;
+        padding: 12px;
+      }
+
+      .title {
+        margin-bottom: 2px;
+      }
+
+      .race-wrapper {
+        gap: 12px;
+      }
+
+      /* A shorter climb leaves room for the controls; lanes still fill it. */
       .race-area {
-        min-height: 56vh;
+        min-height: 40vh;
         gap: 6px;
-        padding: 10px 8px 14px;
+        padding: 10px 8px 12px;
       }
 
       .lane {
         height: 100%;
+      }
+
+      .controls {
+        gap: 10px;
+        margin-top: 6px;
+      }
+
+      .betting-section {
+        margin-bottom: 0;
+      }
+
+      .odds-tip {
+        margin-top: 6px;
+      }
+
+      /* Parimutuel pool is information-dense; compact it on phones.
+         Extra specificity so these win over the later base .pool-panel rules. */
+      .controls .pool-panel {
+        gap: 5px;
+        padding: 8px 10px;
+        margin-top: 8px;
+      }
+
+      .controls .pool-row {
+        grid-template-columns: 56px 1fr 32px;
+      }
+
+      .controls .pool-bar {
+        height: 8px;
       }
     }
 
