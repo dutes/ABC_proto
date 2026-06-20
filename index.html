@@ -339,6 +339,15 @@
       animation: climb 0.4s infinite linear;
     }
 
+    /* Emoji character token (used by reskinned themes that have no art) */
+    .climber-sprite.emoji {
+      display: grid;
+      place-items: center;
+      font-size: clamp(30px, 9vw, 54px);
+      line-height: 1;
+      background-image: none;
+    }
+
     .bubble {
       position: absolute;
       right: -6px;
@@ -419,7 +428,7 @@
       display: grid;
       grid-template-columns: 1fr 2fr 1fr;
       gap: 16px;
-      background: #2a1b3d;
+      background: var(--panel);
       border: 4px solid #5d4037;
       border-radius: 12px;
       padding: 16px;
@@ -505,8 +514,8 @@
       padding: 10px 12px;
       border-radius: 12px;
       border: 2px solid #5d4037;
-      background: #2a1b3d;
-      /* Dark to match theme */
+      background: var(--panel);
+      /* Follows the active event theme */
       cursor: pointer;
       transition: all 0.18s ease;
       font-weight: 700;
@@ -573,15 +582,10 @@
     }
 
     .race-log {
-      background: #0e1a2b;
-      color: #e9f0ff;
-      border-radius: 12px;
-      padding: 10px;
-      font-size: 13px;
-      min-height: 120px;
-      max-height: 200px;
-      overflow-y: auto;
-      box-shadow: inset 0 0 0 1px #203452;
+      /* Hidden — events are already shown as on-lane bubbles and burst words.
+         The element is kept (display:none) so logEvent() stays a harmless no-op
+         and it can be re-enabled later if a commentary feed is wanted. */
+      display: none;
     }
 
     .result-banner {
@@ -719,6 +723,27 @@
     .result-value img {
       width: 32px;
       height: 32px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    .result-emoji {
+      font-size: 26px;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    /* Inline SVG character sprites */
+    .climber-sprite svg,
+    .pumper svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .result-value svg {
+      width: 30px;
+      height: 30px;
       vertical-align: middle;
       margin-right: 8px;
     }
@@ -949,13 +974,290 @@
         transform: translateX(-50%) rotate(6deg);
       }
     }
+
+    /* ---- Top bar: event theme + sound ---- */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .theme-select {
+      background: #1c1326;
+      color: var(--text);
+      border: 2px solid #5d4037;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-family: "Roboto Slab", serif;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .theme-select:hover {
+      border-color: var(--accent);
+    }
+
+    .icon-btn {
+      background: #1c1326;
+      border: 2px solid #5d4037;
+      border-radius: 8px;
+      width: 40px;
+      height: 38px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* ---- Wallet top-up ---- */
+    .topup-btn {
+      margin-top: 6px;
+      background: transparent;
+      border: 1px solid #4fffa7;
+      color: #4fffa7;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .topup-btn:hover {
+      background: rgba(79, 255, 167, 0.12);
+    }
+
+    .topup-btn.pulse {
+      animation: topupPulse 0.9s ease infinite;
+    }
+
+    @keyframes topupPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(79, 255, 167, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(79, 255, 167, 0);
+      }
+    }
+
+    /* ---- "Your pick" backed lane ---- */
+    .lane.backed {
+      box-shadow: 0 0 0 3px var(--accent), 0 0 20px 2px var(--accent-glow);
+      z-index: 3;
+      animation: backedPulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes backedPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 3px var(--accent), 0 0 14px 1px var(--accent-glow);
+      }
+
+      50% {
+        box-shadow: 0 0 0 3px var(--accent), 0 0 26px 5px var(--accent-glow);
+      }
+    }
+
+    .lane .pick-tag {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #2a1b3d;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      z-index: 13;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .lane.backed .pick-tag {
+      opacity: 1;
+    }
+
+    /* ---- Victory celebration ---- */
+    .climber-sprite.cheer {
+      animation: cheerHop 0.5s ease 3;
+    }
+
+    @keyframes cheerHop {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+      }
+
+      30% {
+        transform: translateY(-12px) scale(1.14) rotate(-7deg);
+      }
+
+      60% {
+        transform: translateY(0) scale(1.06) rotate(7deg);
+      }
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -14px;
+      width: 8px;
+      height: 14px;
+      border-radius: 2px;
+      z-index: 26;
+      pointer-events: none;
+      animation: confettiFall 1.8s ease-in forwards;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(var(--fall, 460px)) translateX(var(--dx, 0)) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* ---- Balloon Cup style (theme-driven variant) ---- */
+    /* In balloon mode the lane becomes a translucent tube; the team-colour
+       balloon inflates upward and a pumper character works at the base. */
+    .race-area.style-balloon .lane {
+      background-image: none !important;
+      background-color: rgba(255, 255, 255, 0.05) !important;
+      border-radius: 10px;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06);
+    }
+
+    .race-area.style-balloon .climber-container {
+      display: none;
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: clamp(30px, 9vw, 56px);
+      height: 0;
+      border-radius: 50% 50% 42% 42% / 14% 14% 6% 6%;
+      background:
+        linear-gradient(95deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 45%),
+        var(--bln, #ff5d5d);
+      box-shadow: inset -5px 0 9px rgba(0, 0, 0, 0.18);
+      display: none;
+      z-index: 5;
+    }
+
+    .balloon::after {
+      /* knot */
+      content: "";
+      position: absolute;
+      bottom: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 8px solid var(--bln, #ff5d5d);
+    }
+
+    .race-area.style-balloon .balloon {
+      display: block;
+    }
+
+    .balloon.win {
+      animation: balloonPop 0.7s ease;
+    }
+
+    @keyframes balloonPop {
+
+      0%,
+      100% {
+        transform: translateX(-50%) scale(1);
+      }
+
+      30% {
+        transform: translateX(-50%) scale(1.12, 0.92);
+      }
+
+      60% {
+        transform: translateX(-50%) scale(0.95, 1.06);
+      }
+    }
+
+    .pumper {
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: clamp(40px, 12vw, 60px);
+      height: clamp(40px, 12vw, 60px);
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid #d4af37;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      place-items: center;
+      font-size: clamp(22px, 7vw, 36px);
+      line-height: 1;
+      z-index: 8;
+      display: none;
+      overflow: hidden;
+      background-repeat: no-repeat;
+      background-size: 90%;
+      background-position: center 60%;
+    }
+
+    .race-area.style-balloon .pumper {
+      display: grid;
+    }
+
+    .pumper.pumping {
+      animation: pumpBob 0.34s infinite ease-in-out;
+    }
+
+    @keyframes pumpBob {
+
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+
+      50% {
+        transform: translateX(-50%) translateY(3px) scale(0.93);
+      }
+    }
   </style>
 </head>
 
 <body class="confetti">
   <div class="app-container">
     <div class="app">
-      <div class="title">Always Be Climbing</div>
+      <div class="topbar">
+        <select class="theme-select" id="themeSelect" title="Event theme (reskin demo)">
+          <option value="carnival">🎪 Night Carnival</option>
+          <option value="neon">🌃 Neon Circuit</option>
+          <option value="gold">🏆 Golden Festival</option>
+          <option value="balloon">🎈 Balloon Cup</option>
+        </select>
+        <button class="icon-btn" id="soundToggle" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+      </div>
+      <div class="title" id="gameTitle">Always Be Climbing</div>
       <div class="race-wrapper">
         <div class="race-area" id="raceArea">
           <div class="finish-line" id="finishLine"></div>
@@ -980,6 +1282,7 @@
             <div class="dash-group wallet-group">
               <div class="dash-label">Wallet</div>
               <div class="wallet-amount" id="walletAmount">$100.00</div>
+              <button class="topup-btn" id="topupBtn">+ Add $100</button>
             </div>
 
             <div class="dash-group stake-group">
@@ -1044,9 +1347,16 @@
     ];
 
     let bettingMode = "fixed"; // "fixed" | "parimutuel"
+    let gameStyle = "ladder";  // "ladder" | "balloon" — set by the active theme
     let currentStake = 10;
-    let wallet = 100;
     const STAKE_OPTIONS = [5, 10, 25, 50];
+
+    // Wallet persists across reloads so a demo session survives a refresh.
+    function loadWallet() {
+      const v = parseFloat(localStorage.getItem("abc_wallet"));
+      return Number.isFinite(v) && v > 0 ? v : 100;
+    }
+    let wallet = loadWallet();
 
     const burstWords = {
       boost: ["WOOSH!", "ZOOM!", "FLY!"],
@@ -1071,6 +1381,10 @@
     const oddsTip = document.getElementById("oddsTip");
     const poolPanel = document.getElementById("poolPanel");
     const finishLine = document.getElementById("finishLine");
+    const gameTitle = document.getElementById("gameTitle");
+    const themeSelect = document.getElementById("themeSelect");
+    const soundToggle = document.getElementById("soundToggle");
+    const topupBtn = document.getElementById("topupBtn");
 
     const state = {
       selected: null,
@@ -1088,6 +1402,367 @@
       oddsUsedDisplay: null,
       lastWinner: null             // previous winner
     };
+
+    /* ---------- Sound engine (WebAudio, no assets) ---------- */
+    let audioCtx;
+    let soundEnabled = (localStorage.getItem("abc_sound") || "on") === "on";
+    let murmurNodes = null;
+
+    function getCtx() {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }
+
+    function tone({ freq = 440, dur = 0.15, type = "sine", gain = 0.2, slideTo = null, delay = 0 }) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getCtx();
+        const t = ctx.currentTime + delay;
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(freq, t);
+        if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+        o.connect(g);
+        g.connect(ctx.destination);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(gain, t + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.start(t);
+        o.stop(t + dur + 0.03);
+      } catch (e) { /* audio unavailable */ }
+    }
+
+    const SFX = {
+      slip: () => tone({ freq: 420, slideTo: 150, dur: 0.22, type: "sawtooth", gain: 0.12 }),
+      boost: () => tone({ freq: 300, slideTo: 760, dur: 0.2, type: "triangle", gain: 0.12 }),
+      stall: () => tone({ freq: 180, dur: 0.16, type: "square", gain: 0.08 }),
+      cheer: () => tone({ freq: 520, slideTo: 900, dur: 0.26, type: "sine", gain: 0.12 }),
+      beep: () => tone({ freq: 640, dur: 0.12, type: "square", gain: 0.14 }),
+      go: () => tone({ freq: 990, dur: 0.28, type: "square", gain: 0.18 })
+    };
+
+    function playDing() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getCtx();
+        const t = ctx.currentTime;
+        [880, 1320].forEach((f, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = "sine";
+          o.frequency.value = f;
+          o.connect(g);
+          g.connect(ctx.destination);
+          const start = t + i * 0.05;
+          g.gain.setValueAtTime(0.0001, start);
+          g.gain.exponentialRampToValueAtTime(0.25, start + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, start + 0.5);
+          o.start(start);
+          o.stop(start + 0.5);
+        });
+      } catch (e) { /* no-op */ }
+    }
+
+    // Soft crowd murmur (filtered noise) that fades in while racing.
+    function startMurmur() {
+      if (!soundEnabled || murmurNodes) return;
+      try {
+        const ctx = getCtx();
+        const size = 2 * ctx.sampleRate;
+        const buffer = ctx.createBuffer(1, size, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < size; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        noise.loop = true;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = 650;
+        const gain = ctx.createGain();
+        gain.gain.value = 0.0001;
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        noise.start();
+        gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.6);
+        murmurNodes = { noise, gain };
+      } catch (e) { /* no-op */ }
+    }
+
+    function stopMurmur() {
+      if (!murmurNodes) return;
+      try {
+        const ctx = getCtx();
+        murmurNodes.gain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+        const n = murmurNodes.noise;
+        setTimeout(() => { try { n.stop(); } catch (e) { } }, 500);
+      } catch (e) { /* no-op */ }
+      murmurNodes = null;
+    }
+
+    /* ---------- Event themes (reskin demo) ---------- */
+    const THEMES = {
+      carnival: {
+        title: "Always Be Climbing",
+        style: "ladder",
+        vars: {
+          "--bg-gradient": "radial-gradient(circle at 50% 10%, #4a1c40 0%, #1a0b2e 40%, #050214 100%)",
+          "--panel": "#2a1b3d", "--border": "#deb887", "--accent": "#ffd700",
+          "--accent-glow": "#ff4f8b", "--text": "#fdf0ff", "--muted": "#a89bb0"
+        },
+        palette: ["#ffd166", "#9ad5ff", "#c2f5b6", "#e8e9ff", "#ffd6f2"],
+        // Default theme keeps the painted character art.
+        roster: [
+          { name: "Monkey", asset: "assets/monkey.png" },
+          { name: "Dwarf", asset: "assets/dwarf.png" },
+          { name: "Goblin", asset: "assets/goblin.png" },
+          { name: "Robot", asset: "assets/robot.png" },
+          { name: "Jester", asset: "assets/jester.png" }
+        ]
+      },
+      neon: {
+        title: "Neon Circuit Climb",
+        style: "ladder",
+        vars: {
+          "--bg-gradient": "radial-gradient(circle at 50% 10%, #0c2a4d 0%, #0a1430 45%, #03040f 100%)",
+          "--panel": "#10182e", "--border": "#2de2e6", "--accent": "#00e5ff",
+          "--accent-glow": "#ff2bd6", "--text": "#eafcff", "--muted": "#8aa0c0"
+        },
+        palette: ["#ffe14d", "#36d1ff", "#5cff9d", "#c08bff", "#ff6ad5"],
+        roster: [
+          { name: "Cypher", build: "robot", variant: 0 },
+          { name: "Turbo", build: "robot", variant: 1 },
+          { name: "Glitch", build: "robot", variant: 2 },
+          { name: "Clunk", build: "robot", variant: 3 },
+          { name: "Joker", build: "robot", variant: 4 }
+        ]
+      },
+      gold: {
+        title: "Golden Festival Derby",
+        style: "ladder",
+        vars: {
+          "--bg-gradient": "radial-gradient(circle at 50% 10%, #5a3a12 0%, #2c1c0a 45%, #100a03 100%)",
+          "--panel": "#2b1d10", "--border": "#d9a441", "--accent": "#ffcf33",
+          "--accent-glow": "#ff7a3d", "--text": "#fff6e6", "--muted": "#c2a77f"
+        },
+        palette: ["#ffd166", "#ffb169", "#ffd98c", "#f7c59f", "#ffe2a8"],
+        roster: [
+          { name: "Silk", build: "jockey" },
+          { name: "Dasher", build: "jockey" },
+          { name: "Longshot", build: "jockey" },
+          { name: "Trooper", build: "jockey" },
+          { name: "Stripes", build: "jockey" }
+        ]
+      },
+      // Same engine, rendered as inflating team-colour balloons instead of
+      // climbers — the strongest demonstration of the reskinnable engine.
+      balloon: {
+        title: "Balloon Cup",
+        style: "balloon",
+        vars: {
+          "--bg-gradient": "radial-gradient(circle at 50% 10%, #123a6b 0%, #0a1f3d 45%, #04101f 100%)",
+          "--panel": "#13233d", "--border": "#7fb2ff", "--accent": "#ffd23f",
+          "--accent-glow": "#ff5d8f", "--text": "#eaf3ff", "--muted": "#9bb0cc"
+        },
+        palette: ["#ff5d5d", "#4ea3ff", "#54d66a", "#ffd23f", "#b06bff"],
+        roster: [
+          { name: "Reds", build: "pumper" },
+          { name: "Blues", build: "pumper" },
+          { name: "Greens", build: "pumper" },
+          { name: "Yellows", build: "pumper" },
+          { name: "Purples", build: "pumper" }
+        ]
+      }
+    };
+
+    // Hand-authored, recolourable vector sprites (flat-style placeholders that
+    // could later be swapped for commissioned art). Each takes the slot colour.
+    const SPRITE_BUILDERS = {
+      // Side-view person working a floor pump, hose feeding the balloon above.
+      pumper: (c) => `
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 44 C 80 28, 60 18, 50 8" fill="none" stroke="#9aa3af" stroke-width="4" stroke-linecap="round"/>
+          <rect x="62" y="46" width="16" height="38" rx="4" fill="#6b7280" stroke="#374151" stroke-width="2"/>
+          <rect x="56" y="82" width="26" height="6" rx="3" fill="#374151"/>
+          <rect x="68" y="32" width="4" height="16" fill="#9aa3af"/>
+          <rect x="54" y="28" width="30" height="7" rx="3.5" fill="#374151"/>
+          <rect x="29" y="74" width="8" height="18" rx="3" fill="#3b4252"/>
+          <rect x="41" y="74" width="8" height="18" rx="3" fill="#3b4252"/>
+          <rect x="25" y="48" width="28" height="30" rx="10" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
+          <path d="M49 56 L 66 33" stroke="${c}" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="66" cy="32" r="4.5" fill="#f0c19a"/>
+          <circle cx="33" cy="38" r="11" fill="#f0c19a" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+          <path d="M22 37 a11 11 0 0 1 22 0 z" fill="${c}"/>
+          <rect x="42" y="35" width="9" height="4.5" rx="2.2" fill="${c}"/>
+          <circle cx="30" cy="39" r="1.7" fill="#3a2b22"/>
+          <path d="M27 44 q3 2 6 0" stroke="#3a2b22" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+        </svg>`,
+      // Boxy retro robot — `v` (0-4) gives each one a distinct head/antenna/face.
+      robot: (c, v = 0) => {
+        const body = `
+          <rect x="22" y="58" width="9" height="22" rx="4" fill="#cfd6e4" stroke="#5b6472" stroke-width="1.5"/>
+          <rect x="69" y="58" width="9" height="22" rx="4" fill="#cfd6e4" stroke="#5b6472" stroke-width="1.5"/>
+          <rect x="34" y="56" width="32" height="28" rx="7" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
+          <rect x="44" y="62" width="12" height="10" rx="2" fill="rgba(255,255,255,.55)"/>`;
+        const heads = [
+          // 0 — classic: single antenna, square head, two round eyes
+          `<line x1="50" y1="14" x2="50" y2="26" stroke="#9aa3af" stroke-width="3"/>
+           <circle cx="50" cy="12" r="4" fill="${c}"/>
+           <rect x="30" y="24" width="40" height="30" rx="8" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <rect x="35" y="31" width="30" height="14" rx="6" fill="#10182e"/>
+           <circle cx="44" cy="38" r="3.6" fill="${c}"/><circle cx="56" cy="38" r="3.6" fill="${c}"/>`,
+          // 1 — turbo: twin antennae, rounded head, swept "fast" eyes
+          `<line x1="40" y1="14" x2="36" y2="26" stroke="#9aa3af" stroke-width="3"/>
+           <line x1="60" y1="14" x2="64" y2="26" stroke="#9aa3af" stroke-width="3"/>
+           <circle cx="36" cy="12" r="3.5" fill="${c}"/><circle cx="64" cy="12" r="3.5" fill="${c}"/>
+           <rect x="28" y="24" width="44" height="30" rx="15" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <rect x="34" y="32" width="32" height="12" rx="6" fill="#10182e"/>
+           <polygon points="40,42 48,35 48,42" fill="${c}"/><polygon points="60,42 52,35 52,42" fill="${c}"/>`,
+          // 2 — glitch: jagged antenna, square head, mismatched eyes + zigzag mouth
+          `<polyline points="50,26 50,20 46,16 52,12 48,7" fill="none" stroke="#9aa3af" stroke-width="2.5"/>
+           <rect x="30" y="24" width="40" height="30" rx="4" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <rect x="35" y="30" width="30" height="13" rx="3" fill="#10182e"/>
+           <circle cx="43" cy="36" r="4.5" fill="${c}"/><rect x="53" y="34" width="8" height="4" fill="${c}"/>
+           <polyline points="38,49 42,46 46,49 50,46 54,49 58,46 62,49" fill="none" stroke="#5b6472" stroke-width="2"/>`,
+          // 3 — clunk: bent antenna, side bolts, single visor bar
+          `<path d="M50 26 L50 18 L57 14" fill="none" stroke="#9aa3af" stroke-width="3"/>
+           <circle cx="58" cy="13" r="3.5" fill="${c}"/>
+           <rect x="30" y="24" width="40" height="30" rx="6" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <circle cx="28" cy="39" r="3" fill="#9aa3af"/><circle cx="72" cy="39" r="3" fill="#9aa3af"/>
+           <rect x="35" y="34" width="30" height="9" rx="4" fill="#10182e"/>
+           <rect x="40" y="36" width="6" height="4" rx="2" fill="${c}"/><rect x="54" y="36" width="6" height="4" rx="2" fill="${c}"/>`,
+          // 4 — joker: coil antenna + star, triangular eyes, big smile
+          `<path d="M50 26 q-4 -3 0 -6 q4 -3 0 -6" fill="none" stroke="#9aa3af" stroke-width="2.5"/>
+           <path d="M50 6 l1.4 3 3.2 .3 -2.3 2.1 .7 3.1 -3-1.7 -3 1.7 .7-3.1 -2.3-2.1 3.2-.3z" fill="${c}"/>
+           <rect x="30" y="24" width="40" height="30" rx="11" fill="#cfd6e4" stroke="#5b6472" stroke-width="2"/>
+           <rect x="35" y="30" width="30" height="13" rx="6" fill="#10182e"/>
+           <polygon points="40,33 47,33 43.5,40" fill="${c}"/><polygon points="53,33 60,33 56.5,40" fill="${c}"/>
+           <path d="M40 47 q10 7 20 0" fill="none" stroke="#5b6472" stroke-width="2" stroke-linecap="round"/>`
+        ];
+        return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${heads[v % heads.length]}${body}</svg>`;
+      },
+      // Jockey bust in coloured silks + cap.
+      jockey: (c) => `
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M30 70 q20 -9 40 0 l5 20 q-25 9 -50 0 z" fill="${c}" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+          <rect x="46" y="64" width="8" height="28" fill="rgba(255,255,255,.55)"/>
+          <path d="M40 50 q10 13 20 0 q0 11 -10 13 q-10 -2 -10 -13 z" fill="#f0c19a"/>
+          <path d="M29 42 a21 19 0 0 1 42 0 z" fill="${c}" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+          <ellipse cx="50" cy="42" rx="22" ry="4" fill="${c}"/>
+          <circle cx="50" cy="25" r="3" fill="rgba(255,255,255,.7)"/>
+          <rect x="36" y="42" width="28" height="8" rx="4" fill="#2b2b2b"/>
+          <circle cx="44" cy="46" r="2.6" fill="#bcd2e8"/>
+          <circle cx="56" cy="46" r="2.6" fill="#bcd2e8"/>
+        </svg>`
+    };
+
+    // Paint a climber's visuals: the climbing token, the balloon-mode pumper,
+    // and the balloon colour — a vector sprite, a PNG, or an emoji.
+    function renderClimberSprite(i) {
+      const c = climbers[i];
+      const lane = document.querySelector(`.lane[data-index="${i}"]`);
+      if (!lane) return;
+      const balloon = lane.querySelector(".balloon");
+      const svg = c.build && SPRITE_BUILDERS[c.build] ? SPRITE_BUILDERS[c.build](c.color, c.variant || 0) : null;
+
+      const paint = (el) => {
+        if (!el) return;
+        if (svg) {
+          el.classList.remove("emoji");
+          el.style.backgroundImage = "none";
+          el.innerHTML = svg;
+        } else if (c.emoji) {
+          el.classList.add("emoji");
+          el.style.backgroundImage = "none";
+          el.textContent = c.emoji;
+        } else {
+          el.classList.remove("emoji");
+          el.textContent = "";
+          el.style.backgroundImage = `url('${c.asset}')`;
+        }
+      };
+      paint(lane.querySelector(".climber-sprite"));
+      paint(lane.querySelector(".pumper"));
+      if (balloon) balloon.style.setProperty("--bln", c.color);
+    }
+
+    // Icon markup for the result card (vector sprite, PNG, or emoji).
+    function climberIcon(c) {
+      if (c.build && SPRITE_BUILDERS[c.build]) return SPRITE_BUILDERS[c.build](c.color, c.variant || 0);
+      return c.emoji ? `<span class="result-emoji">${c.emoji}</span>` : `<img src="${c.asset}" />`;
+    }
+
+    function applyTheme(key) {
+      const t = THEMES[key] || THEMES.carnival;
+      gameStyle = t.style || "ladder";
+      raceArea.classList.toggle("style-balloon", gameStyle === "balloon");
+      Object.entries(t.vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+      gameTitle.textContent = t.title;
+      t.roster.forEach((r, i) => {
+        climbers[i].name = r.name;
+        climbers[i].emoji = r.emoji || null;
+        climbers[i].build = r.build || null;
+        climbers[i].variant = r.variant || 0;
+        if (r.asset) climbers[i].asset = r.asset;
+        climbers[i].color = t.palette[i];
+        const lane = document.querySelector(`.lane[data-index="${i}"]`);
+        // In balloon mode the lane is a neutral tube; the balloon carries colour.
+        if (lane) lane.style.backgroundColor = gameStyle === "balloon" ? "rgba(255,255,255,0.05)" : t.palette[i];
+        renderClimberSprite(i);
+      });
+      // Reset any in-progress visuals to their base position for the new style.
+      document.querySelectorAll(".balloon").forEach(b => (b.style.height = "0px"));
+      document.querySelectorAll(".climber-container").forEach(el => (el.style.transform = "translateY(0)"));
+      updateBetButtons();
+      if (bettingMode === "parimutuel") renderPoolPanel();
+      try { localStorage.setItem("abc_theme", key); } catch (e) { /* ignore */ }
+    }
+
+    /* ---------- Commentary + confetti ---------- */
+    const COMMENTARY = {
+      ladder: {
+        slip: ["loses their grip and slides back!", "hits a slippery rung — ohh!", "stumbles down a few rungs!"],
+        boost: ["finds a burst of pace!", "rockets up the ladder!", "surges clear!"],
+        stall: ["is stuck on a loose rung!", "can't find the next rung!", "grinds to a halt!"],
+        cheer: ["feeds off the crowd and flies!", "gets a roar from the stands!", "lifts with the cheers!"]
+      },
+      balloon: {
+        slip: ["springs a leak and sags!", "loses air — ohh!", "deflates a little!"],
+        boost: ["gets a huge puff of air!", "inflates fast!", "balloons clear!"],
+        stall: ["pinches the nozzle — stuck!", "can't get a pump going!", "stalls for air!"],
+        cheer: ["the crowd pumps it up!", "a roar inflates it!", "lifts on the cheers!"]
+      }
+    };
+
+    // Style-aware event labels shown on the bubble.
+    const EVENT_LABELS = {
+      ladder: { slip: "SLIP!", boost: "BOOST!", stall: "STUCK!", cheer: "HYPE!" },
+      balloon: { slip: "LEAK!", boost: "PUFF!", stall: "PINCH!", cheer: "PUMP!" }
+    };
+
+    function commentate(type, name) {
+      const sets = COMMENTARY[gameStyle] || COMMENTARY.ladder;
+      const list = sets[type] || sets.boost;
+      return `🎙️ ${name} ${list[Math.floor(Math.random() * list.length)]}`;
+    }
+
+    function burstConfetti() {
+      const colors = ["#ffd166", "#ff4f8b", "#8ec5ff", "#9effa9", "#ffd6f2", "#ffffff"];
+      const fall = raceArea.clientHeight + 20;
+      for (let i = 0; i < 90; i++) {
+        const p = document.createElement("div");
+        p.className = "confetti-piece";
+        p.style.left = Math.random() * 100 + "%";
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.setProperty("--fall", fall + "px");
+        p.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+        p.style.animationDelay = (Math.random() * 0.35) + "s";
+        raceArea.appendChild(p);
+        setTimeout(() => p.remove(), 2300);
+      }
+    }
 
     // Build the lane elements and bet buttons
     function setupClimbers() {
@@ -1119,8 +1794,22 @@
         bell.className = "lane-bell";
         bell.textContent = "🔔";
 
+        // "Your pick" tag, shown on the lane the player backed
+        const pickTag = document.createElement("div");
+        pickTag.className = "pick-tag";
+        pickTag.textContent = "YOUR PICK";
+
+        // Balloon-mode elements (hidden unless a balloon-style theme is active)
+        const balloon = document.createElement("div");
+        balloon.className = "balloon";
+        const pumper = document.createElement("div");
+        pumper.className = "pumper";
+
         lane.appendChild(bubble);
         lane.appendChild(bell);
+        lane.appendChild(pickTag);
+        lane.appendChild(balloon);
+        lane.appendChild(pumper);
         lane.appendChild(climberEl);
         raceArea.appendChild(lane);
 
@@ -1297,6 +1986,10 @@
 
     function updateWalletUI() {
       walletAmountEl.textContent = `$${formatMoney(wallet)}`;
+      try { localStorage.setItem("abc_wallet", String(wallet)); } catch (e) { /* ignore */ }
+      // Nudge the top-up button when the player can't afford the minimum stake.
+      const broke = wallet < Math.min(...STAKE_OPTIONS);
+      topupBtn.classList.toggle("pulse", broke);
     }
 
     // Handle player selection
@@ -1327,6 +2020,10 @@
       clearWinningLane(); // Clear any visual effects
       // Also clear previous winner flag on start
       document.querySelectorAll(".lane.prev-winner").forEach(el => el.classList.remove("prev-winner"));
+
+      // Glow the lane the player backed so they can track "their" climber.
+      document.querySelectorAll(".lane.backed").forEach(el => el.classList.remove("backed"));
+      document.querySelector(`.lane[data-index="${state.selected}"]`).classList.add("backed");
 
       // In parimutuel the crowd betting closes and the player's stake joins
       // the pool, which sets the final tote odds used for payout.
@@ -1360,7 +2057,9 @@
     function countdown(steps, onComplete) {
       let i = 0;
       const tick = () => {
-        countdownEl.textContent = steps[i];
+        const cur = steps[i];
+        countdownEl.textContent = cur;
+        if (cur === "GO!") SFX.go(); else SFX.beep();
         i++;
         if (i < steps.length) {
           setTimeout(tick, 650);
@@ -1391,15 +2090,29 @@
       const lanes = Array.from(document.querySelectorAll(".lane"));
       const climberContainerEls = Array.from(document.querySelectorAll(".climber-container"));
       const spriteEls = Array.from(document.querySelectorAll(".climber-sprite"));
+      const balloonEls = Array.from(document.querySelectorAll(".balloon"));
+      const pumperEls = Array.from(document.querySelectorAll(".pumper"));
       const winnerIdx = state.predeterminedWinner;
+      const isBalloon = gameStyle === "balloon";
 
-      // Start hopping
-      spriteEls.forEach(el => el.classList.add("moving"));
+      // Draw a climber's progress: climbing token, or balloon fill height.
+      const setProgress = (idx, pos) => {
+        if (isBalloon) balloonEls[idx].style.height = `${pos}px`;
+        else climberContainerEls[idx].style.transform = `translateY(-${pos}px)`;
+      };
+
+      // Start the action (hop up the ladder, or pump the balloon)
+      if (isBalloon) pumperEls.forEach(el => el.classList.add("pumping"));
+      else spriteEls.forEach(el => el.classList.add("moving"));
+      startMurmur();
+      logEvent("🏁 They're off!");
 
       const step = () => {
         lanes.forEach((lane, idx) => {
-          // Reserve the climber's actual height (it scales on small screens)
-          const maxHeight = lane.clientHeight - climberContainerEls[idx].offsetHeight;
+          // Reserve space at the top: the bell zone (balloon) or the climber's
+          // own height (ladder, which scales on small screens).
+          const reserve = isBalloon ? 40 : climberContainerEls[idx].offsetHeight;
+          const maxHeight = lane.clientHeight - reserve;
           let pos = state.positions.get(idx) || 0;
 
           const effects = state.eventEffects.get(idx);
@@ -1439,14 +2152,12 @@
 
           pos = Math.max(0, Math.min(pos, ceiling));
           state.positions.set(idx, pos);
-
-          const climberEl = climberContainerEls[idx];
-          const spriteEl = spriteEls[idx];
-          climberEl.style.transform = `translateY(-${pos}px)`;
+          setProgress(idx, pos);
 
           if (isWinner && pos >= maxHeight - 3) {
-            spriteEl.classList.remove("moving");
-            climberEl.style.transform = `translateY(-${maxHeight}px)`;
+            if (isBalloon) pumperEls[idx].classList.remove("pumping");
+            else spriteEls[idx].classList.remove("moving");
+            setProgress(idx, maxHeight);
             ringBell(idx);
             endRace(idx);
           }
@@ -1469,29 +2180,19 @@
       }
       finishLine.classList.add("flash");
       setTimeout(() => finishLine.classList.remove("flash"), 850);
+      // Winner celebration: climber hops, or balloon gives a victory wobble.
+      const lane = document.querySelector(`.lane[data-index="${idx}"]`);
+      const sprite = lane && lane.querySelector(".climber-sprite");
+      const balloon = lane && lane.querySelector(".balloon");
+      if (sprite) {
+        sprite.classList.add("cheer");
+        setTimeout(() => sprite.classList.remove("cheer"), 1600);
+      }
+      if (balloon) {
+        balloon.classList.add("win");
+        setTimeout(() => balloon.classList.remove("win"), 750);
+      }
       playDing();
-    }
-
-    let audioCtx;
-    function playDing() {
-      try {
-        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-        const t = audioCtx.currentTime;
-        [880, 1320].forEach((f, i) => {
-          const o = audioCtx.createOscillator();
-          const g = audioCtx.createGain();
-          o.type = "sine";
-          o.frequency.value = f;
-          o.connect(g);
-          g.connect(audioCtx.destination);
-          const start = t + i * 0.05;
-          g.gain.setValueAtTime(0.0001, start);
-          g.gain.exponentialRampToValueAtTime(0.25, start + 0.01);
-          g.gain.exponentialRampToValueAtTime(0.0001, start + 0.5);
-          o.start(start);
-          o.stop(start + 0.5);
-        });
-      } catch (e) { /* audio not available — no-op */ }
     }
 
     // Micro-events, weighted per character profile. Returns the position delta
@@ -1502,36 +2203,41 @@
       const order = ["slip", "boost", "stall", "cheer"];
       const type = order[weightedPick(order.map((t) => prof.weights[t]))];
 
-      let label = "BOOST!";
+      const labels = EVENT_LABELS[gameStyle] || EVENT_LABELS.ladder;
+      let label = labels.boost;
       let color = "#1c9fff";
       let delta = 0;
 
       if (type === "slip") {
-        label = "SLIP!";
+        label = labels.slip;
         color = "#ff7a3d";
         delta = -(Math.random() * 6 + 4) * prof.mag;
         createBurst(lane, Math.max(0, pos + delta), pickWord("slip"), false);
+        SFX.slip();
       } else if (type === "boost") {
-        label = "BOOST!";
+        label = labels.boost;
         color = "#1c9fff";
         delta = (Math.random() * 8 + 6) * prof.mag;
         createBurst(lane, pos + delta, pickWord("boost"), true);
+        SFX.boost();
       } else if (type === "stall") {
-        label = "STUCK!";
+        label = labels.stall;
         color = "#a0a0a0";
         const effects = state.eventEffects.get(index);
         effects.pausedUntil = Date.now() + (800 + Math.random() * 400);
         createBurst(lane, pos, pickWord("stall"), false);
+        SFX.stall();
       } else {
-        label = "HYPE!";
+        label = labels.cheer;
         color = "#d94fff";
         const effects = state.eventEffects.get(index);
         effects.speedMult = 1.6;
         effects.speedMultUntil = Date.now() + 2000;
         createBurst(lane, pos, pickWord("cheer"), true);
+        SFX.cheer();
       }
 
-      logEvent(`${climbers[index].name}: ${label}`);
+      logEvent(commentate(type, climbers[index].name));
 
       // Show bubble briefly
       bubble.textContent = label;
@@ -1568,10 +2274,12 @@
       if (!state.racing) return;
       state.racing = false;
       cancelAnimationFrame(state.raceTimer);
+      stopMurmur();
       const winningClimber = climbers[winningIndex];
       state.lastWinner = winningIndex; // Store winner
       const picked = climbers[state.selected];
       const won = state.selected === winningIndex;
+      logEvent(`🔔 ${winningClimber.name} rings the bell!`);
 
       // Payout uses the odds locked in at the start of the race.
       const payout = Math.round(currentStake * state.oddsUsedDecimal);
@@ -1579,6 +2287,7 @@
       if (won) {
         wallet += payout;
         updateWalletUI();
+        burstConfetti();
       }
 
       const net = won ? payout - currentStake : -currentStake;
@@ -1596,11 +2305,11 @@
         <div class="result-grid">
           <div class="result-row">
             <span class="result-label">Winner</span>
-            <span class="result-value"><img src="${winningClimber.asset}" /> ${winningClimber.name}</span>
+            <span class="result-value">${climberIcon(winningClimber)} ${winningClimber.name}</span>
           </div>
           <div class="result-row">
             <span class="result-label">Your Pick</span>
-            <span class="result-value"><img src="${picked.asset}" /> ${picked.name} (${state.oddsUsedDisplay})</span>
+            <span class="result-value">${climberIcon(picked)} ${picked.name} (${state.oddsUsedDisplay})</span>
           </div>
           <div class="result-row">
              <span class="result-label">Bet Type</span>
@@ -1645,6 +2354,7 @@
     function resetUI() {
       disableBetButtons(false);
       clearWinningLane();
+      document.querySelectorAll(".lane.backed").forEach(el => el.classList.remove("backed"));
       state.positions.forEach((_, idx) => state.positions.set(idx, 0));
       state.eventEffects.forEach((_, idx) => state.eventEffects.set(idx, { pausedUntil: 0, speedMult: 1, speedMultUntil: 0 }));
       document.querySelectorAll(".climber-container").forEach((el) => {
@@ -1653,6 +2363,9 @@
       document.querySelectorAll(".climber-sprite").forEach((el) => {
         el.classList.remove("moving");
       });
+      // Reset balloon visuals
+      document.querySelectorAll(".balloon").forEach((el) => (el.style.height = "0px"));
+      document.querySelectorAll(".pumper").forEach((el) => el.classList.remove("pumping"));
 
       // Mark previous winner
       if (state.lastWinner !== null) {
@@ -1698,8 +2411,32 @@
     // Hook up start button
     startBtn.addEventListener("click", startRace);
 
+    // Top-up: keep a demo session alive when funds run low.
+    topupBtn.addEventListener("click", () => {
+      if (state.racing || state.inCountdown) return;
+      wallet += 100;
+      updateWalletUI();
+      warningEl.textContent = "";
+    });
+
+    // Sound toggle (persisted)
+    function refreshSoundIcon() { soundToggle.textContent = soundEnabled ? "🔊" : "🔇"; }
+    soundToggle.addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      refreshSoundIcon();
+      try { localStorage.setItem("abc_sound", soundEnabled ? "on" : "off"); } catch (e) { /* ignore */ }
+      if (soundEnabled) getCtx(); else stopMurmur();
+    });
+
+    // Event theme switcher (persisted) — demonstrates the reskinnable engine.
+    themeSelect.addEventListener("change", () => applyTheme(themeSelect.value));
+
     // Initialize
     setupClimbers();
+    refreshSoundIcon();
+    const savedTheme = localStorage.getItem("abc_theme") || "carnival";
+    themeSelect.value = savedTheme;
+    applyTheme(savedTheme);
     logEvent("Welcome! Place your bet and start the race.");
   </script>
 </body>
