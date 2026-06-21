@@ -1488,12 +1488,6 @@
       }
     }
 
-    /* The event shake would fight the fixed-position transform */
-    body.demo-overlay .app-container.shake,
-    body.demo-dialog .app-container.shake {
-      animation: none;
-    }
-
     .present-close {
       display: none;
       position: absolute;
@@ -2554,9 +2548,15 @@
     }
 
     function pickWord(type) {
-      if (type === "slip" || type === "boost" || type === "cheer") {
-        document.querySelector(".app-container").classList.add("shake");
-        setTimeout(() => document.querySelector(".app-container").classList.remove("shake"), 400);
+      // Skip the shake in floated views (overlay/pop-up): the app-container is
+      // fixed-positioned and carries the entrance animation, so toggling shake
+      // there would re-trigger that animation and make the dialog flicker.
+      const floated = document.body.classList.contains("demo-overlay") ||
+        document.body.classList.contains("demo-dialog");
+      if (!floated && (type === "slip" || type === "boost" || type === "cheer")) {
+        const ac = document.querySelector(".app-container");
+        ac.classList.add("shake");
+        setTimeout(() => ac.classList.remove("shake"), 400);
       }
       const list = burstWords[type] || burstWords.boost;
       return list[Math.floor(Math.random() * list.length)];
