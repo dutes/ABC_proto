@@ -1538,7 +1538,7 @@
 
   <!-- Mock sportsbook page (the host context the game is surfaced inside) -->
   <div class="host" id="host" aria-hidden="true">
-    <div class="host-top"><span class="host-brand">🏇 RACEBOOK</span><span class="host-balance">£250.00</span></div>
+    <div class="host-top"><span class="host-brand">🏇 RACEBOOK</span><span class="host-balance" id="hostBalance">$100</span></div>
     <div class="host-banner">
       <span class="host-live">● LIVE</span><span>Cheltenham Festival</span>
       <span class="host-next">Next race <strong id="hostCountdown">18:42</strong></span>
@@ -1691,6 +1691,7 @@
     const gameTitle = document.getElementById("gameTitle");
     const themeSelect = document.getElementById("themeSelect");
     const soundToggle = document.getElementById("soundToggle");
+    const hostBalance = document.getElementById("hostBalance");
 
     const state = {
       selected: null,
@@ -2292,6 +2293,8 @@
 
     function updateWalletUI() {
       walletAmountEl.textContent = `$${formatMoney(wallet)}`;
+      // Keep the mock sportsbook balance in sync (shared wallet illustration).
+      if (hostBalance) hostBalance.textContent = `$${formatMoney(wallet)}`;
     }
 
     // Handle player selection
