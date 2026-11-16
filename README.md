@@ -1,5 +1,7 @@
 # Always Be Climbing (ABC) Prototype
 
+**▶ Play it live:** https://dutes.github.io/ABC_proto/
+
 A web-based betting and racing game prototype built with vanilla HTML, CSS, and JavaScript. 
 
 ## Overview
