@@ -4,6 +4,14 @@
 
 A web-based betting and racing game prototype built with vanilla HTML, CSS, and JavaScript. 
 
+![A race in progress, with a bet on the Monkey](docs/screenshot.png)
+
+## Why I built it
+
+Virtual races already sit inside most sportsbooks, but the odds are a black box: you can't see how the price relates to the chance of winning. I wanted to test the opposite. Every climber has a true win probability, the posted odds come from that plus a stated house edge, and the winner is drawn from the same probabilities. The odds are honest, and you can check them.
+
+The second question is placement. The View switcher shows the same race as a standalone game, an embedded widget, an overlay and a pop-up, because where a game like this lives inside a sportsbook matters as much as the game itself.
+
 ## Overview
 "Always Be Climbing" is a fast-paced virtual racing game where players start with a virtual wallet and place bets on one of five climbers. Each climber has a defined win probability and a distinct variance profile; the posted odds are derived from those probabilities plus a configurable house edge, so payouts are honest and the model is demonstrable.
 
@@ -29,3 +37,7 @@ A web-based betting and racing game prototype built with vanilla HTML, CSS, and 
 
 ## Development
 This is a self-contained prototype meant to test the core loop of betting, race visualization, and dynamic event generation. All logic, styling, and markup are contained within `index.html`.
+
+## Licence
+
+© Brian Doutey. All rights reserved. The code is published so it can be read and the game played; it isn't licensed for reuse.
